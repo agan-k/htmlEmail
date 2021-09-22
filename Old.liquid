@@ -1,0 +1,695 @@
+
+<p>
+      Hi {{ customer.first_name }}, 
+      Thank you for your order [Order #]. We can’t wait to get you the premium 
+      listening experience you’ve been waiting for.
+    </p>
+    <p>
+      Before we can customize your CSX earphones, we’ll send you your UE FitKit. 
+      You will receive a shipping confirmation email with tracking information when 
+      your FitKit ships.
+    </p>
+{% capture email_title %}Thank you for your order! {% endcapture %}
+{% capture thank_you_header %}Thanks for your order! {% endcapture %}
+{% capture weve_got_header %}We've got your order! {% endcapture %}
+{% capture weve_got_header_fits %}We've got your pre-order! {% endcapture %}
+
+{% capture cant_wait_subhed %}
+We can't wait to get started on your custom-fit earphones.
+{% endcapture %}
+{% capture first_step_subhed %}
+The first step is getting your ear impressions
+{% endcapture %}
+{% capture thanks_subhed %}
+Thanks for your order! We are preparing your item(s) for shipment and will send you an email notification once they've been sent.
+{% endcapture %}
+{% capture fits_subhed %}
+Thanks for your order! Shipping starts late Fall. We will send you an email notification once they’re ready.
+{% endcapture %}
+
+{% capture exist_cust_q %} 
+<b>Are you an existing customer or have 3D digital ear scans with us?</b>
+{% endcapture %}
+{% capture sending_q %} 
+<b>Sending new audiologist impressions? </b>
+{% endcapture %}
+{% capture exist_cust_a %} 
+Great! We will get started on your order shortly and you will receive another email with the scheduled ship date.
+{% endcapture %}
+{% capture sending_a1 %} 
+Please share <a href="https://backstage.ultimateears.com/media/pdfs/2018audiologist-instructions.pdf">these instructions</a> with your audiologist to help ensure they capture all of the information we need. Your impressions should look similar to the sampe impression in terms of canal size, detail and base width. Failing to capture all of the information we need could result in your impressions being unusable. 
+{% endcapture %}
+{% capture sending_a2 %} 
+Once you have your ear impressions, please ship your original order confirmation and ear impressions to:
+{% endcapture %}
+{% capture sending_a3 %} 
+Ultimate Ears Custom #{{ order_number }}<br>
+3 Jenner Street<br>
+Suite 180<br>
+Irvine, CA 92618<br>
+(800) 589-6531
+{% endcapture %}
+
+{% capture first_step_midbody %}
+  The first step is getting your ear impressions. We will be sending you an <b>at-home Fitkit</b> to capture a detailed impression of your ears.
+{% endcapture %}
+
+{% capture track_journey %}
+  Track its journey here: 
+    {% if fulfillment.tracking_numbers.size > 0 %}
+      {% if fulfillment.tracking_numbers.size == 1 and fulfillment.tracking_url %}
+        <a href="{{ fulfillment.tracking_url }}">{{ fulfillment.tracking_numbers.first }}</a>
+      {% elsif fulfillment.tracking_numbers.size == 1 %} {{ fulfillment.tracking_numbers.first }} 
+      {% else %} 
+      <a href="{{ fulfillment.tracking_url }}">{{ fulfillment.tracking_numbers }}</a>
+      {% endif %}
+    {% endif %}
+{% endcapture %}
+
+
+{% capture impressions_1 %}
+We use these impressions to craft earphones for your unique ear geometry. The process is simple and you can do it from home. When you're all finished, pack up the kit and use the provided <b>prepaid shipping label</b> to send everything back! 
+{% endcapture %}
+{% capture impressions_2 %}
+You'll receive another email from us shortly when your FitKit ships. In the meantime, you can <a href="https://fitkit.zendesk.com/hc/en-us/articles/360035352592-FitKit-Guide">check out the process</a> on our site and download the UE FitKit app for <a href="https://apps.apple.com/us/app/ue-fitkit/id1383753317">iOS</a> or <a href="https://play.google.com/store/apps/details?id=com.revols.uefitkit&hl=en_US">Android</a>.
+{% endcapture %}
+
+{% assign isPro = false %}
+{% assign isFits = false %}
+{% assign isMonitor = false %}
+{% assign allOther = false %}
+
+{% for line in line_items %}
+       {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
+             {% assign isPro = true %} 
+        {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
+            {% assign isMonitor = true %} 
+        {% elsif line.product.type == "UE Fits" %}
+            {% assign isFits = true %} 
+        {% else %}
+            {% assign allOther = true %} 
+        {% endif %}
+{% endfor %} 
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title>{{ email_title }}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" type="text/css" href="/assets/notifications/styles.css">
+</head>
+
+<body>
+  <table class="body">
+    <tr>
+      <td>
+        <table class="header row">
+          <tr>
+            <td class="header__cell">
+              <table class="container" align="center">
+                <tr>
+                {% if isPro %}
+                    <td class="shop-name__cell">
+                      {%- if shop.email_logo_url %}
+                        <img src="https://cdn.shopify.com/s/files/1/0019/6450/7245/files/UE-pro-logo-blue_2x_b2933a84-99e2-46e3-9b90-b504d54ed575.png?v=1587408027" alt="{{ shop.name }}" width="{{ shop.email_logo_width }}" style="text-align: center;">
+                      {%- else %}
+                        <h1 class="shop-name__text">
+                          <a href="{{shop.url}}">{{ shop.name }}</a>
+                        </h1>
+                      {%- endif %}
+                    </td>
+                  {% else %}
+                    <td class="shop-name__cell">
+                      {%- if shop.email_logo_url %}
+                        <img src="{{shop.email_logo_url}}" alt="{{ shop.name }}" width="{{ shop.email_logo_width }}" style="text-align: center;">
+                      {%- else %}
+                        <h1 class="shop-name__text">
+                          <a href="{{shop.url}}">{{ shop.name }}</a>
+                        </h1>
+                      {%- endif %}
+                    </td>
+                  {% endif %}
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+<table class="row content">
+  <tr>
+    <td class="content__cell" style="padding-bottom: 0px;">
+      <center>
+        <table class="container" style="margin-top: 20px;">
+          <tr>
+            <td style="margin-top: 20px;">
+
+         {% if isPro or isMonitor %}
+            <h2 align="center">{{ thank_you_header }}</h2>
+          {% elsif isFits %}
+            <h2 align="center">{{ weve_got_header_fits }}</h2>
+          {% else %}
+            <h2 align="center">{{ weve_got_header }}</h2>
+        {% endif %}
+
+       {% if isPro or isMonitor %}
+            <p class="body-text-small">{{ cant_wait_subhed }}</p>
+       {% elsif isFits %}
+            <p class="body-text-small">{{ fits_subhed }}</p>
+       {% endif %}
+      
+     {% if isPro %}
+            <p class="body-text-small">{{ first_step_subhed }} </p>
+      {% endif %}
+      {% unless isPro or isMonitor or isFits %}
+            <p class="body-text-small">{{ thanks_subhed }} </p> 
+      {% endunless %}
+
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+ {% if isPro %}
+
+ <table class="row" style="margin-bottom: 25px;">
+  {% for line in line_items %}
+  {% if line.product.type == "pro"  %}
+  <tr class="order-list__item">
+    <td class="order-list__item__cell" align="center">
+      <table>
+        <td align="center">
+        {% if line.properties and line.properties._image %}
+               <img class="image_large" src="{{ line.properties._image}}" class="order-list__product-image"/>
+        {% else %}
+            {% if line.image %}
+                    <img class="image_large" src="{{ line | img_url: '450x350', crop: 'center' }}" class="order-list__product-image"/>
+            {% endif %}
+        {% endif %}
+        </td>
+  </tr>
+     {% endif %}
+  {% endfor %}
+</table>
+
+<table class="row content">
+  <tr>
+    <td class="content__cell">
+      <center>
+        <table class="container">
+          <tr>
+            <td>
+
+            <p class="body-text-small" style="max-width: 300px; margin: 0 auto;">{{ exist_cust_q }}</p>
+            <p class="body-text-small">{{ exist_cust_a }}</p>
+            <p class="body-text-small">{{ sending_q }}</p>
+            <p class="body-text-small">{{ sending_a1 }}</p>
+            <p class="body-text-small">{{ sending_a2 }}</p>
+            <p class="body-text-small">{{ sending_a3 }}</p>
+
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+{% endif %}
+
+{% if isMonitor %}
+
+<table class="row" style="margin-bottom: 25px;">
+  {% for line in line_items %}
+  {% if line.product.type == "Monitor" %}
+  <tr class="order-list__item">
+    <td class="order-list__item__cell" align="center">
+      <table>
+        <td align="center">
+        {% if line.properties and line.properties._image %}
+               <img class="image_large" src="{{ line.properties._image}}" class="order-list__product-image"/>
+        {% else %}
+            {% if line.image %}
+                    <img class="image_large" src="{{ line | img_url: '450x425', crop: 'center' }}" class="order-list__product-image"/>
+            {% endif %}
+        {% endif %}
+        </td>
+
+  </tr>
+  {% endif %}
+   {% endfor %}
+</table>
+
+<table class="row content">
+  <tr>
+    <td class="content__cell">
+      <center>
+        <table class="container" style="margin-top: 30px;">
+          <tr>
+            <td>
+            <p class="body-text-small">{{ first_step_midbody }}</p>
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+<table class="row" style="margin-bottom: 25px;">
+  {% for line in line_items %}
+  {% if line.title == 'UE FitKit' %}
+  <tr class="order-list__item">
+    <td class="order-list__item__cell" align="center">
+      <table>
+        <td align="center">
+        {% if line.properties and line.properties._image %}
+               <img class="image_large" src="{{ line.properties._image}}" class="order-list__product-image"/>
+        {% else %}
+            {% if line.image %}
+                    <img class="image_large" src="{{ line | img_url: '450x425' }}" class="order-list__product-image"/>
+            {% endif %}
+        {% endif %}
+        </td>
+
+  </tr>
+   {% endif %}
+{% endfor %}
+</table>
+
+<table class="row content" style="margin-top: 40px;">
+  <tr>
+    <td class="content__cell">
+      <center>
+        <table class="container">
+          <tr>
+            <td style="margin-top: 20px;">
+
+            <p class="body-text-small" style="line-height: 36px;">{{ impressions_1 }}</p>
+            <p class="body-text-small" style="line-height: 36px;">{{ impressions_2 }}</p>
+
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+<table class="row content">
+  <tr>
+    <td class="content__cell">
+      <center>
+        <table class="container apps">
+          <tr class="one-half">
+            <td>
+              <a href="https://apps.apple.com/us/app/ue-custom/id1279377981"><img class="ios" src="https://cdn.shopify.com/s/files/1/0019/6450/7245/files/download-on-app-store-png-open-2000.png?v=1587415969" width=160></a><a href="https://play.google.com/store/apps/details?id=com.logitech.ue.uecustom&hl=en_US"><img src="https://cdn.shopify.com/s/files/1/0019/6450/7245/files/google-play-badge.png?v=1587133839" width=180></a>
+            </td>
+            </tr>
+            </td>
+            </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+ 
+{% endif %}
+
+{% comment %} --- Order Table --- {% endcomment %}
+
+<table class="row section" margin-bottom: 20px;>
+  <tr>
+    <td class="section__cell">
+      <center>
+        <table class="container">
+          <tr>
+            <td>
+              <h2 align="center" style="font-size: 32px;">Order details</h2>
+            </td>
+          </tr>
+        </table>
+        <table class="container">
+          <tr>
+            <td>
+
+<table class="row">
+  {% for line in line_items %}
+  {% unless line.title == 'UE FitKit' %}
+  <tr class="order-list__item">
+    <td class="order-list__item__cell">
+      <table>
+        <td>
+        {% if line.properties and line.properties._image %}
+               <img src="{{ line.properties._image}}" align="left" style="height:150px;" class="order-list__product-image"/>
+        {% else %}
+            {% if line.image %}
+                    <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="auto" class="order-list__product-image"/>
+            {% endif %}
+        {% endif %}
+
+        </td>
+        <td class="order-list__product-description-cell">
+          {% if line.product.title %}
+            {% assign line_title = line.product.title %}
+          {% else %}
+            {% assign line_title = line.title %}
+          {% endif %}
+
+          {% if line.quantity < line.quantity %}
+            {% capture line_display %} {{ line.quantity }} of {{ line.quantity }} {% endcapture %}
+          {% else %}
+            {% assign line_display = line.quantity  %}
+          {% endif %}
+
+          <span class="order-list__item-title">{{ line_title }} × {{ line_display }}</span><br/>
+
+          {% if line.variant.title != 'Default Title' %}
+            <span class="order-list__item-variant">{{ line.variant.title }}</span>
+          {% endif %}
+        </td>
+          <td class="order-list__price-cell">
+            {% if line.original_line_price != line.line_price %}
+              <del class="order-list__item-original-price">{{ line.original_line_price | money }}</del>
+            {% endif %}
+            <p class="order-list__item-price">{{ line.line_price | money }}</p>
+          </td>
+      </table>
+    </td>
+  </tr>{% endunless %}{% endfor %}
+</table>
+
+<table class="row subtotal-lines subtotal-divider" style="margin-top: 20px;">
+  <tr>
+    <td class="subtotal-spacer"></td>
+    <td>
+      <table class="row subtotal-table">
+        {% if discounts %}
+          {% capture discount_title %}Discount {% if discounts.first.code %}({{ discounts.first.code }}){% endif %}{% endcapture %}
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>{{ discount_title }}</span>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000;">{{ discounts_savings | money }}</strong>
+  </td>
+</tr>
+
+        {% endif %}
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>Subtotal</span>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000;">{{ subtotal_price | money }}</strong>
+  </td>
+</tr>
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>Shipping</span>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000;">{{ shipping_price | money }}</strong>
+  </td>
+</tr>
+
+        {% for line in tax_lines %}
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>{{ line.title }}{% for p in line.properties %}{% unless p.last == blank %} - {{ p.first }}: {{ p.last }}{% endunless %}{% endfor %}</span>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000;">{{ line.price | money }}</strong>
+  </td>
+</tr>
+
+        {% endfor %}
+      </table>
+
+     <table style="clear: both;">
+     </table>
+
+     <table class="row subtotal-table subtotal-table--total">
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>Total</span>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000; font-size: 20px;">{{ total_price | money_with_currency }}</strong>
+  </td>
+</tr>
+
+      </table>
+
+      {% assign transaction_size = 0 %}
+      {% for transaction in transactions %}
+        {% unless transaction.kind == "capture" or transaction.kind == "void" %}
+          {% assign transaction_size = transaction_size | plus: 1 %}
+        {% endunless %}
+      {% endfor %}
+
+      {% if transaction_size > 1 %}
+        <table class="row subtotal-table">
+          <tr><td colspan="2" class="subtotal-table__line"></td></tr>
+          <tr><td colspan="2" class="subtotal-table__small-space"></td></tr>
+
+          {% for transaction in transactions %}
+            {% if transaction.status == "success" and transaction.kind == "authorization" or transaction.kind == "sale" %}
+              {% if transaction.payment_details.credit_card_company %}
+                {% capture transaction_name %}{{ transaction.payment_details.credit_card_company }} (ending in {{ transaction.payment_details.credit_card_last_four_digits }}){% endcapture %}
+              {% else %}
+                {% capture transaction_name %}{{ transaction.gateway | replace: "_", " " | capitalize }}{% endcapture %}
+              {% endif %}
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>{{transaction_name}}</span>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000; font-size: 20px;">{{ transaction.amount | money }}</strong>
+  </td>
+</tr>
+
+            {% endif %}
+            {% if transaction.kind == 'refund' %}
+              {% if transaction.payment_details.credit_card_company %}
+                {% assign refund_method_title = transaction.payment_details.credit_card_company %}
+              {% else %}
+                {% assign refund_method_title = transaction.gateway %}
+              {% endif %}
+
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      <span>Refund</span>
+        <br>
+        <small>{{ refund_method_title | capitalize }}</small>
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    <strong style="color: #000;">- {{ transaction.amount | money }}</strong>
+  </td>
+</tr>
+
+            {% endif %}
+          {% endfor %}
+        </table>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+
+{% comment %} -------- Billing and Shipping ------- {% endcomment %}
+
+<table class="row" style="margin-bottom: 20px;">
+       <tr>
+          <td class="content__cell" style="padding-bottom: 0px;">
+              {% if requires_shipping and shipping_address %}
+                <center>
+                <table class="container">
+                 <td class="customer-info__item">
+                  <h4 class="customer_info_h4">Shipping address</h4>
+                  <p>
+  {{ shipping_address.name }}<br/>
+  {{ shipping_address.address1 }}<br/>
+  {% if shipping_address.address2 != blank %}
+  {{ shipping_address.address2 }}<br/>
+  {% endif %}
+  {{ shipping_address.city }}, {{ shipping_address.province }} {{ shipping_address.zip }}<br/>
+  {{ shipping_address.country }}<br/>
+</p>
+
+                </td>
+                {% endif %}
+                {% if billing_address %}
+                <td class="customer-info__item">
+                  <h4 class="customer_info_h4">Billing address</h4>
+                  <p>
+  {{ billing_address.name }}<br/>
+  {{ billing_address.address1 }}<br/>
+  {% if billing_address.address2 != blank %}
+ {{ billing_address.address2 }}<br/>
+  {% endif %}
+  {{ billing_address.city }}, {{ billing_address.province }} {{ billing_address.zip }}<br/>
+  {{ billing_address.country }}<br/>
+</p>
+
+                </td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if requires_shipping and shipping_address %}
+                <td class="customer-info__item" style="padding-bottom: 0px;">
+                  <h4 class="customer_info_h4">Shipping method</h4>
+                  <p>{{ shipping_method.title }}</p>
+                </td>
+                {% endif %}
+                {% assign transaction_count = transactions | size %}
+                {% if transaction_count > 0 %}
+                <td class="customer-info__item" style="padding-bottom: 0px;">
+                  <h4 class="customer_info_h4">Payment method</h4>
+                  {% for transaction in transactions %}
+                    {% if transaction.status == "success" or transaction.status == "pending" %}
+                      {% if transaction.kind == "authorization" or transaction.kind == "sale" %}
+                        <p class="customer-info__item-content">
+                          {% if transaction.payment_details.credit_card_company %}
+                            {% capture credit_card_url %}notifications/{{ transaction.payment_details.credit_card_company | downcase | replace: " ", "_" }}.png{% endcapture %}
+                            <img src="{{ credit_card_url | shopify_asset_url }}" class="customer-info__item-credit" height="24">
+                            <span>Ending in {{ transaction.payment_details.credit_card_last_four_digits }} — <strong>{{ total_price | money }}</strong></span>
+                          {% else %}
+                            {{ transaction.gateway | replace: "_", " " | capitalize }} — <strong>{{ transaction.amount | money }}</strong>
+                          {% endif %}
+                        </p>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                </table>
+                </center>
+                {% endif %}
+                </td>
+              </tr>
+            </table>
+ {% comment %} -------- Billing and Shipping (end) ------- {% endcomment %}
+
+{% comment %} --- Order Table (END) --- {% endcomment %}
+
+
+ <table class="row footer">
+  <tr>
+    <td class="footer__cell" style="padding-bottom: 0px;">
+      <center>
+        <table class="container">
+       <tr>
+            <td>
+              <p class="disclaimer__subtext" style="margin-bottom: 30px; font-size: 20px;">Stay up to date on your order's progress <a href="https://custom.ultimateears.com/pages/order-lookup" style="font-size: 20px;">here</a></p>
+            </td>
+          </tr>
+  <tr>
+    <td class="actions__cell" align="center">
+      <table class="button main-action-cell" style="margin-bottom: 30px; float: none; text-align: center;">
+        <tr align="center">
+          <div><!--[if mso]>
+  <v:rect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://" style="height:40px;v-text-anchor:middle;width:200px;" stroke="f" fillcolor="#000000">
+    <w:anchorlock/>
+    <center>
+  <![endif]-->
+      <a href="{{ order_status_url }}"
+style="background-color:#000000;color:#ffffff;display:inline-block;font-family:akzidenz-grotesk, Helvetica, sans-serif;font-size:20px;font-weight:400;line-height:40px;text-align:center;text-decoration:none;padding: 10px 35px;width:200px;-webkit-text-size-adjust:none;">TRACK ORDER</a>
+  <!--[if mso]>
+    </center>
+  </v:rect>
+<![endif]--></div>
+        </tr>
+      </table>
+    </td>
+  </tr>
+    {% if isPro or isMonitor %}
+          <tr>
+            <td>
+              <p class="disclaimer__subtext" style="margin-bottom: 60px; ">If you have any questions, just reply to this email and we'll be happy to help!</p>
+            </td>
+          </tr>
+    {% endif %}
+</table>
+
+{% unless isPro or isMonitor %}
+<table class="row content" style="margin-bottom: 60px;">
+ <tr>
+    <td class="footer__cell">
+      <center>
+        <table class="container" align="center">
+          <tr>
+            <td>
+            <h2 align="center">We're here to help!</h2>
+            <p class="disclaimer__subtext">Feel free to contact our team at <a href="{{ shop.email }}">{{ shop.email }}</a> or give us a ring at {{ shop.phone }}</p>
+
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+{% endunless %}
+</table>
+
+<table class="row footer">
+<tr class="table__full-width" align="center">
+                  <td class="social__row">
+<a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="https://cdn.shopify.com/s/files/1/0259/7588/1814/files/icon-facebook.png?6506"></a>
+<a href="https://www.instagram.com/ultimateearspro"><img class="social__icon ig" src="https://cdn.shopify.com/s/files/1/0259/7588/1814/files/icon-instagram.png?6506"></a>
+<a href="https://twitter.com/ultimateearspro"><img class="social__icon" src="https://cdn.shopify.com/s/files/1/0019/6450/7245/files/download.png?v=1587068735"></a>
+</td>
+          </tr>
+      </center>
+    </td>
+  </tr>
+</table> 
+
+<img src="{{ 'notifications/spacer.png' | shopify_asset_url }}" class="spacer" height="1" />
+ <table align="center">
+     <td>
+      <tr align="center">
+            <td>
+              <p class="footer__subtext" style="margin-bottom: 20px;">2021 Ultimate Ears. All Rights Reserved. </p>
+          </tr>
+     </td>
+   </table>
+
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

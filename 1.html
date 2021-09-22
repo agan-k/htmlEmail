@@ -1,0 +1,371 @@
+{% capture email_title %}Thank you for your order! {% endcapture %}
+{% capture header %}{{ customer.first_name }}, Your UE FITS Order is
+Confirmed!{% endcapture %}
+{% capture message %}
+<p>
+  Your UE FITS order <strong>{{ order_number }}</strong> is
+  confirmed. You will receive a shipping confirmation email with
+  tracking information when your order ships.
+</p>
+<p>
+  If you need help or have any questions, contact the UE team at
+  <strong><span><a href="mailto:fits@ultimateears.com?subject=Need%20Help%20with%20my%20Fits%20Order&body="
+        target="_blank" rel="noopener">fits@ultimateears.com</a></span></strong>
+  or live chat with us on our website.
+</p>
+{% endcapture %}
+​
+​
+​
+<!DOCTYPE html>
+<html lang="en">
+​
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>{{ email_title }}</title>
+​
+  <style type="text/css">
+    table,
+    td {
+      color: #000000;
+    }
+​
+    a {
+      color: #000000;
+      text-decoration: underline;
+    }
+​
+    .social__row {
+      padding: 15px;
+      text-align: center;
+    }
+​
+    .center {
+      text-align: center;
+    }
+​
+    .pt-15 {
+      padding-top: 15px;
+    }
+​
+    .pt-30 {
+      padding-top: 30px;
+    }
+​
+    .pb-15 {
+      padding-bottom: 15px;
+    }
+​
+    .pb-30 {
+      padding-bottom: 30px;
+    }
+​
+    .p-15-all-around {
+      padding: 15px;
+    }
+​
+    .p-30-all-around {
+      padding: 30px;
+    }
+​
+    .social__icon {
+      padding-right: 10px;
+      width: 30px;
+      margin: 0 10px;
+    }
+​
+    @media only screen and (max-width: 480px) {
+      #u_content_heading_1 .v-font-size {
+        font-size: 30px !important;
+      }
+​
+      #u_content_text_2 {
+        padding: 10px !important;
+      }
+    }
+​
+    @media only screen and (min-width: 620px) {
+      .u-row {
+        width: 600px !important;
+        margin: 0 auto;
+      }
+​
+      .u-row .u-col {
+        vertical-align: top;
+      }
+    }
+​
+    @media (max-width: 620px) {
+      .u-row-container {
+        max-width: 100% !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+      }
+​
+      .u-row .u-col {
+        min-width: 320px !important;
+        max-width: 100% !important;
+        /* display: block !important; */
+      }
+​
+      .u-row {
+        width: calc(100% - 40px) !important;
+        margin: 0 auto;
+      }
+​
+      .u-col {
+        width: 100% !important;
+      }
+​
+      .u-col>div {
+        margin: 0 auto;
+      }
+    }
+​
+    body {
+      margin: 15px 0;
+      padding: 0;
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    }
+​
+    table,
+    tr,
+    td {
+      vertical-align: top;
+      border-collapse: collapse;
+    }
+​
+    p {
+      margin: 0 0 15px;
+    }
+​
+    .ie-container table,
+    .mso-container table {
+      table-layout: fixed;
+    }
+​
+    * {
+      line-height: inherit;
+    }
+​
+    a[x-apple-data-detectors="true"] {
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+​
+    .purple {
+      background-color: #eee8f6;
+    }
+​
+    .offwhite {
+      background-color: #faf9f7;
+    }
+​
+    .order-list__product-description-cell {
+      width: 50%;
+    }
+​
+    .vert-center {
+      vertical-align: middle;
+    }
+  </style>
+​
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+</head>
+​
+<body class="clean-body">
+  <table class="u-row" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="" align="center">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center">
+                <a href="{{shop.url}}" target="_blank">
+                  {%- if shop.email_logo_url %}
+                    <img align="center" border="0" src="{{shop.email_logo_url}}" alt="" title="" width="116" />
+                  {%- else %}
+                  <h1 class="shop-name__text">
+                    <a href="{{shop.url}}">{{ shop.name }}</a>
+                  </h1>
+                  {%- endif %}
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="p-30-all-around " align="center">
+          <h1 class="v-font-size">
+            <strong>{{ header }}</strong>
+          </h1>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="" align="center">
+          <img align="center" border="0"
+            src="https://s3.amazonaws.com/unroll-images-production/projects%2F0%2F1631726080958-fits-order-confirmed.png"
+            alt="" title="" width="464" />
+        </td>
+      </tr>
+
+      <tr>
+        <td class="" align="left">
+          <div class="p-30-all-around" align="center">
+            {{ message }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table width="100%">
+
+            {% for line in line_items %}
+              <tr>
+                <td>
+                  {% if line.properties and line.properties._image %}
+                  <img src="{{ line.properties._image}}" align="left" class="order-list__product-image" />
+                  {% elsif line.image %}
+                  <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="auto"
+                    class="order-list__product-image" />
+                  {% endif %}
+                </td>
+                <td class="order-list__product-description-cell vert-center" align="left">
+                  {% if line.product.title %} 
+                    {% assign line_title = line.product.title %} 
+                  {% else %} 
+                    {% assign line_title = line.title %} 
+                  {% endif %} 
+                  {% if line.quantity < line.quantity %} 
+                    {% capture line_display %} 
+                      {{ line.quantity }} of {{ line.quantity }} 
+                    {% endcapture %} 
+                  {% else %} 
+                    {% assign line_display=line.quantity %} 
+                  {% endif %} 
+                  <strong><span class="order-list__item-title">
+                    {{ line_title }} × {{ line_display }}
+                  </span>
+                  <br />
+                  {% if line.variant.title != 'Default Title' %}
+                    <span class="order-list__item-variant">{{ line.variant.title }}</span>
+                  {% endif %}</strong>
+                </td>
+                <td class="order-list__price-cell" align="right">
+                  {% if line.original_line_price != line.line_price %}
+                  <del class="order-list__item-original-price">{{ line.original_line_price | money }}</del>
+                  {% endif %}
+                  <p class="order-list__item-price">
+                    {{ line.line_price | money }}
+                  </p>
+                </td>
+              </tr>
+            {% endfor %}
+
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+            <tbody>
+              <tr>
+                <td width="40%"></td>
+                <td class="" align="left">
+                  <p>{{ discount_title }}</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ discount_title }}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td width="40%"></td>
+                <td class="" align="left">
+                  <p>Subtotal</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ subtotal_price | money }}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td width="40%"></td>
+                <td class="" align="left">
+                  <p>Shipping</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ shipping_price | money }}</strong>
+                </td>
+              </tr>
+              {% for line in tax_lines %}
+                <tr>
+                  <td width="40%"></td>
+                  <td class="" align="left">
+                    <p>
+                      {{ line.title }}
+                      {% for p in line.properties %}
+                        {% unless p.last == blank %}
+                         - {{ p.first }}: {{ p.last }}
+                        {% endunless %}
+                      {% endfor %}
+                    </p>
+                  </td>
+                  <td class="" align="right">
+                    <strong>{{ line.price | money }}</strong>
+                  </td>
+                </tr>
+              {% endfor %}
+​
+              <tr>
+                <td width="40%"></td>
+                <td class="" align="left">
+                  <p>Total</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ total_price | money_with_currency }}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+​
+      <tr>
+        <td>
+          <table class="offwhite" width="100%">
+            <tbody>
+              <tr>
+                <td class="p-15-all-around">
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                    <tbody>
+                      <tr>
+                        <td class="" align="left">
+                          <p><strong>Shipping Address</strong></p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="" align="left">
+                          <p>
+                            {{ shipping_address.name }}<br />
+                            {{ shipping_address.address1 }}<br />
+                            {% if shipping_address.address2 != blank %} {{
+                            shipping_address.address2 }}<br />
+                            {% endif %} {{ shipping_address.city }}, {{
+                            shipping_address.province_code }} {{
+                            shipping_address.zip }}<br />
+                            {{ shipping_address.country }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td class="p-15-all-around">
+                  <table role="presentation" cellpadding="0" c...

@@ -1,0 +1,663 @@
+  {% endif %}
+  {% if isPro %}
+  {% elsif isMonitor %}
+  {% elsif isFits %}
+  {% endif %}
+{% comment %} //// ASSIGN PRODUCT ///// {% endcomment %}
+{% assign isPro = false %}
+{% assign isFits = false %}
+{% assign isMonitor = false %}
+{% for line in line_items %}
+  {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
+    {% assign isPro = true %}
+    {% assign isFits = false %}
+    {% assign isMonitor = false %}
+  {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
+    {% assign isMonitor = true %}
+    {% assign isFits = false %}
+    {% assign isPro = false %}
+  {% elsif line.product.type == "UE Fits" %}
+    {% assign isFits = true %}
+    {% assign isMonitor = false %}
+    {% assign isPro = false %}
+  {% endif %}
+{% endfor %}
+{% comment %}
+////// EMAIL TITLE /////
+{% endcomment %}
+{% capture email_title %}Thank you for your order! {% endcapture %}
+{% comment %}
+////// HEADER ////////
+{% endcomment %}
+{% capture header %}
+  {% if isPro %}
+    Create. Perform. Stream.
+  {% elsif isMonitor %}
+    Your Premium Listening Experience Awaits
+  {% elsif isFits %}
+    {{ customer.first_name }}, Your UE FITS Order is Confirmed!
+  {% endif %}
+{% endcapture %}
+{% comment %}
+//// CONFIRMATION MESSAGE /////
+{% endcomment %}
+{% capture confirmation_message %}
+  {% if isPro %}
+  <p>
+    <strong>Hi {{ customer.first_name }},</strong><br>
+    Thank you for your order [Order #]. We can’t wait to get you your custom IEMs. 
+    Before we can customize your PRO in-ear monitors, we need your impressions.
+  </p>
+  <p>
+    If you’re sending us physical molds, please share these instructions with your 
+    audiologist to ensure they capture all of the information needed to craft your IEMs. 
+    Your impressions should look similar to the sample impression in terms of canal size, 
+    detail and base width. Failing to capture all of the information we need may result in 
+    your impressions being unusable. 
+  </p>
+  <p>
+    <strong>
+    Once you have your physical impressions, please ship them to:<br/> 
+    Ultimate Ears Pro {{ order_number }}<br/>
+    3 Jenner Street<br/>
+    Suite 180<br/>
+    Irvine, CA 92618<br/>
+    (800) 589-6531<br/>
+    </strong>
+  </p>
+  <a id="btn" href="">
+    <!--[if mso]>
+    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+      <![endif]-->
+    <span style="mso-text-raise: 15pt;"><strong>Audiologist Instructions</strong></span>
+    <!--[if mso]>
+      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+    <![endif]-->
+  </a>
+  <p>
+    If you’re an existing customer or if we have your 3D scans on file, we’ll start working 
+    on your in-ear monitors right away. You can expect an update from us shortly with an 
+    anticipated completion date. 
+  </p>
+{% elsif isMonitor %}
+    <p>
+      Hi {{ customer.first_name }}, 
+      Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you the premium 
+      listening experience you’ve been waiting for.
+    </p>
+    <p>
+      Before we can customize your CSX earphones, we’ll send you your UE FitKit. 
+      You will receive a shipping confirmation email with tracking information when 
+      your FitKit ships.
+    </p>
+  {% elsif isFits %}
+    <p>
+      Your UE FITS order <strong>{{ order_number }}</strong> is
+      confirmed. You will receive a shipping confirmation email with
+      tracking information when your order ships.
+    </p>
+    <p>
+      If you need help or have any questions, contact the UE team at
+      <strong><span>
+        <a href="mailto:fits@ultimateears.com?subject=Need%20Help%20with%20my%20Fits%20Order&body="
+            target="_blank" rel="noopener">fits@ultimateears.com</a>
+      </span></strong>
+      or live chat with us on our website.
+    </p>
+  {% endif %}
+{% endcapture %}
+{% comment %}
+////  ORDER TRACKING /////
+{% endcomment %}
+{% capture order_tracking %}
+  <p>
+    Keep tabs on your progress 
+    <strong><span><a href="{{order_status_url}}">here</a></span></strong>
+  </p>
+  <a id="btn" href="{{order_status_url}}">
+    <!--[if mso]>
+    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+      <![endif]-->
+    <span style="mso-text-raise: 15pt;"><strong>View Order</strong></span>
+    <!--[if mso]>
+      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+    <![endif]-->
+  </a>
+{% endcapture %}
+{% capture contact_us_message %}
+  <h2>Have Questions?</h2>
+  <p>
+    Our customer support team is happy to help answer any questions you have about your 
+    order and your UE FITS!
+  </p>
+{% endcapture %}
+{% capture contact_us_email %}
+  <h3 style="text-transform: uppercase;">EMAIL</h3>
+  <p>
+    <strong><span>us at fits@ultimateears.com</span></strong>
+  </p>
+{% endcapture %}
+{% capture contact_us_livechat %}
+  <h3 style="text-transform: uppercase;">LIVE CHAT</h3>
+  <p>
+    <strong><span>with a real person on our website</span></strong>
+  </p>
+  <a id="btn" href="https://custom.ultimateears.com/pages/contact">
+    <!--[if mso]>
+    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+      <![endif]-->
+    <span style="mso-text-raise: 15pt;"><strong>View Order</strong></span>
+    <!--[if mso]>
+      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+    <![endif]-->
+  </a>
+{% endcapture %}
+
+{% capture copyright %}
+  <p>
+    <small>
+      &copy; 2021 Ultimate Ears. All Rights Reserved.<br/>
+      Want to change how you receive these emails? Update your email preferences or unsubscribe from the list.
+    </small>
+  </p>
+{% endcapture %}
+​
+​
+​
+<!DOCTYPE html>
+<html lang="en">
+​
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>{{ email_title }}</title>
+​
+  <style type="text/css">
+    table,
+    td {
+      color: #000000;
+    }
+​
+    a {
+      color: #000000;
+      text-decoration: underline;
+    }
+    #btn {
+      width: 200px;
+      background-color: black; 
+      font-size: 18px; 
+      font-family: Helvetica, Arial, sans-serif; 
+      font-weight: bold; 
+      text-decoration: none; 
+      padding: 14px 20px; 
+      color: white; 
+      border-radius: 30px; 
+      display: inline-block; 
+      mso-padding-alt: 0;
+    }
+    #btn span:hover {
+      color: grey;
+      transition: .3s;
+    }
+
+    hr {
+      border-top: 1px solid #FAF9F7;
+    }
+​
+    .social__row {
+      padding: 15px;
+      text-align: center;
+    }
+​
+    .center {
+      text-align: center;
+    }
+
+    .px-60 {
+      padding-right: 60px;
+      padding-left: 60px;
+    }
+    .py-30 {
+      padding-top: 30px;
+      padding-bottom: 30px;
+    }
+    .py-15 {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+​
+    .pt-15 {
+      padding-top: 15px;
+    }
+​
+    .pt-30 {
+      padding-top: 30px;
+    }
+​
+    .pb-15 {
+      padding-bottom: 15px;
+    }
+​
+    .pb-30 {
+      padding-bottom: 30px;
+    }
+​
+    .p-15-all-around {
+      padding: 15px;
+    }
+​
+    .p-30-all-around {
+      padding: 30px;
+    }
+​
+    .social__icon {
+      padding-right: 10px;
+      width: 30px;
+      margin: 0 10px;
+    }
+​
+    @media (max-width: 480px) {
+      #u_content_heading_1 .v-font-size {
+        font-size: 30px !important;
+      }
+​
+      #u_content_text_2 . {
+        padding: 10px !important;
+      }
+    }
+​
+    @media only screen and (min-width: 620px) {
+      .u-row {
+        width: 600px !important;
+        margin: 0 auto;
+      }
+​
+      .u-row .u-col {
+        vertical-align: top;
+      }
+    }
+​
+    @media (max-width: 620px) {
+      .u-row-container {
+        max-width: 100% !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+      }
+​
+      .u-row .u-col {
+        min-width: 320px !important;
+        max-width: 100% !important;
+        /* display: block !important; */
+      }
+​
+      .u-row {
+        width: calc(100% - 40px) !important;
+        margin: 0 auto;
+      }
+​
+      .u-col {
+        width: 100% !important;
+      }
+​
+      .u-col>div {
+        margin: 0 auto;
+      }
+    }
+​
+    body {
+      margin: 15px 0;
+      padding: 0;
+      font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    }
+​
+    table,
+    tr,
+    td {
+      vertical-align: top;
+      border-collapse: collapse;
+    }
+​
+    p {
+      margin: 0 0 15px;
+    }
+    p small {
+      color: grey;
+    }
+​
+    .ie-container table,
+    .mso-container table {
+      table-layout: fixed;
+    }
+​
+    * {
+      line-height: inherit;
+    }
+​
+    a[x-apple-data-detectors="true"] {
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+​
+    .purple {
+      background-color: #eee8f6;
+    }
+​
+    .offwhite {
+      background-color: #faf9f7;
+    }
+​
+    .order-list__product-description-cell {
+      width: 50%;
+    }
+    .order-list__item-price {
+      margin: 0; 
+    }
+​
+    .vert-center {
+      vertical-align: middle;
+    }
+  </style>
+​
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+</head>
+​
+<body class="clean-body">
+
+  <div style="width: 60%; margin: 2rem auto; border: 1px solid red; word-wrap: break-word;">
+   {% comment %} <p>item_count: {{item_count}}</p>
+   <p>line product title: {{line.product.title}}</p> {% endcomment %}
+  {% for  line in line_items %}
+    <div class="p-30-all-around py-30" align="center">
+      <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="auto"
+                            class="order-list__product-image" /><span>{{line.title}} </span><br/>
+        
+    </div>
+  {% endfor %}
+   {% comment %} <p>customer: {{customer.first_name}}</p>
+   <p>order status url: {{order_status_url}}</p> {% endcomment %}
+  </div>
+
+  <table class="u-row" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="" align="center">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center">
+                <a href="{{shop.url}}" target="_blank">
+                  {%- if shop.email_logo_url %}
+                    <img align="center" border="0" src="{{shop.email_logo_url}}" alt="" title="" width="116" />
+                  {%- else %}
+                  <h1 class="shop-name__text">
+                    <a href="{{shop.url}}">{{ shop.name }}</a>
+                  </h1>
+                  {%- endif %}
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="p-30-all-around " align="center">
+          <h1 class="v-font-size">
+            <strong>{{ header }}</strong>
+          </h1>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="" align="center">
+          {% if isPro %}
+            <img align="center" border="0"
+              src=""
+              alt="" title="" width="464" />
+          {% elsif isMonitor %}
+            <img align="center" border="0"
+              src=""
+              alt="" title="" width="464" />
+          {% elsif isFits %}
+            <img align="center" border="0"
+              src="https://s3.amazonaws.com/unroll-images-production/projects%2F0%2F1631726080958-fits-order-confirmed.png"
+              alt="" title="" width="464" />
+          {% endif %}
+        </td>
+      </tr>
+
+      <tr>
+        <td class="" align="left">
+          <div class="p-30-all-around" align="center">
+            {{ confirmation_message }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table width="100%">
+
+            {% for line in line_items %}
+              <tr>
+                <td>
+                  {% if line.properties and line.properties._image %}
+                  <img src="{{ line.properties._image}}" align="left" class="order-list__product-image" />
+                  {% elsif line.image %}
+                  <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="auto"
+                    class="order-list__product-image" />
+                  {% endif %}
+                </td>
+                <td class="order-list__product-description-cell vert-center" align="left">
+                  {% if line.product.title %}
+                  product title 
+                    {% assign line_title = line.product.title %} 
+                  {% else %} 
+                  line title
+                    {% assign line_title = line.title %} 
+                  {% endif %} 
+                  {% if line.quantity < line.quantity %} 
+                    {% capture line_display %} 
+                      {{ line.quantity }} of {{ line.quantity }} 
+                    {% endcapture %} 
+                  {% else %} 
+                    {% assign line_display=line.quantity %} 
+                  {% endif %} 
+                  <strong><span class="order-list__item-title">
+                    {{ line_title }} × {{ line_display }}
+                  </span>
+                  <br />
+                  {% if line.variant.title != 'Default Title' %}
+                    <span class="order-list__item-variant">{{ line.variant.title }}</span>
+                  {% endif %}</strong>
+                </td>
+                <td class="order-list__price-cell vert-center" align="right" valign="middle">
+                  {% if line.original_line_price != line.line_price %}
+                  <del class="order-list__item-original-price">{{ line.original_line_price | money }}</del>
+                  {% endif %}
+                  <p class="order-list__item-price">
+                    {{ line.line_price | money }}
+                  </p>
+                </td>
+              </tr>
+            {% endfor %}
+
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+      <div class="p-15-all-around" align="center">
+        <hr/>
+      </div>
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+            <tbody>
+              <tr>
+                {% if discount != blank %}
+                  <td width="60%"></td>
+                  <td class="" align="left">
+                    <p>Discount</p>
+                  </td>
+                  <td class="" align="right">
+                    <strong>{{ discount_amount }}</strong>
+                  </td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td width="60%"></td>
+                <td class="" align="left">
+                  <p>Subtotal</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ subtotal_price | money }}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td width="60%"></td>
+                <td class="" align="left">
+                  <p>Shipping</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ shipping_price | money }}</strong>
+                </td>
+              </tr>
+              {% for line in tax_lines %}
+                <tr>
+                  <td width="60%"></td>
+                  <td class="" align="left">
+                    <p>
+                      {{ line.title }}
+                      {% for p in line.properties %}
+                        {% unless p.last == blank %}
+                         - {{ p.first }}: {{ p.last }}
+                        {% endunless %}
+                      {% endfor %}
+                    </p>
+                  </td>
+                  <td class="" align="right">
+                    <strong>{{ line.price | money }}</strong>
+                  </td>
+                </tr>
+              {% endfor %}
+
+              <tr>
+                <td width="60%"></td>
+                <td class="" align="left">
+                  <p>Total</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ total_price | money_with_currency }}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table class="offwhite" width="100%">
+            <tbody>
+              <tr>
+                <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                    <tbody width="30%">
+                      <tr>
+                        <td class="" align="left">
+                          <p><strong>Shipping Address</strong></p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="" align="left">
+                          <p>
+                            {{ shipping_address.name }}<br />
+                            {{ shipping_address.address1 }}<br />
+                            {% if shipping_address.address2 != blank %} {{
+                            shipping_address.address2 }}<br />
+                            {% endif %} {{ shipping_address.city }}, {{
+                            shipping_address.province_code }} {{
+                            shipping_address.zip }}<br />
+                            {{ shipping_address.country }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                    <tbody>
+                      <tr>
+                        <td class="" align="left">
+                          <p><strong>Billing Address</strong></p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="" align="left">
+                          {% if billing_address == shipping_address %}
+                          <p>
+                            Same as shipping address.
+                          </p>
+                          {% else %}
+                            <p>
+                              {{ billing_address.name }}<br />
+                              {{ billing_address.address1 }}<br />
+                              {% if billing_address.address2 != blank %} {{
+                              billing_address.address2 }}<br />
+                              {% endif %} {{ billing_address.city }}, {{
+                              billing_address.province_code }} {{
+                              billing_address.zip }}<br />
+                              {{ billing_address.country }}
+                            </p>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-30-all-around" align="center">
+            {{ order_tracking }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-15-all-around" align="center">
+            {{ contact_us_message }}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="purple" width="100%" align="center">
+            <tr>
+              <td>
+                <div class="pb-30" align="center">
+                  {{contact_us_email}}
+                  <br/>
+                  {{contact_us_livechat}}
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-30-all-around" align="center">
+           {{ copyright }}
+          </div>
+        </td>
+      </tr>
+      

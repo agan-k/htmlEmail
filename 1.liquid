@@ -1,28 +1,22 @@
-  {% endif %}
-  {% if isPro %}
-  {% elsif isMonitor %}
-  {% elsif isFits %}
-  {% endif %}
-{% comment %} //// ASSIGN PRODUCT ///// {% endcomment %}
-{% assign isPro = false %}
-{% assign isFits = false %}
-{% assign isMonitor = false %}
-{% for line in line_items %}
-  {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
-    {% assign isPro = true %}
-    {% assign isFits = false %}
-    {% assign isMonitor = false %}
-  {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
-    {% assign isMonitor = true %}
-    {% assign isFits = false %}
-    {% assign isPro = false %}
-  {% elsif line.product.type == "UE Fits" %}
-    {% assign isFits = true %}
-    {% assign isMonitor = false %}
-    {% assign isPro = false %}
-  {% endif %}
-{% endfor %}
 {% comment %}
+//// ASSIGN PRODUCT ///// 
+{% endcomment %}
+{% assign isPro = false %}
+{% assign isMonitor = false %}
+{% assign isFits = true %}
+{% assign isAccsOnly = false %}
+{% comment %} {% for line in line_items %}
+  {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
+   {% assign isPro = true %}
+  {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
+   {% assign isMonitor = true %}
+   {% elsif line.product.type == "Faceplate" %}
+   {% assign isFits = true %}
+  {% elsif line.product.type == "Accessories" %}
+   {% assign isAccsOnly = true %}
+  {% endif %}
+{% endfor %} {% endcomment %}
+{% comment %} 
 ////// EMAIL TITLE /////
 {% endcomment %}
 {% capture email_title %}Thank you for your order! {% endcapture %}
@@ -36,6 +30,8 @@
     Your Premium Listening Experience Awaits
   {% elsif isFits %}
     {{ customer.first_name }}, Your UE FITS Order is Confirmed!
+  {% elsif isAccOnly %}
+    Accessories Only!
   {% endif %}
 {% endcapture %}
 {% comment %}
@@ -44,8 +40,8 @@
 {% capture confirmation_message %}
   {% if isPro %}
   <p>
-    <strong>Hi {{ customer.first_name }},</strong><br>
-    Thank you for your order [Order #]. We can’t wait to get you your custom IEMs. 
+    <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+    Thank you for your order {{ order_number }}. We can’t wait to get you your custom IEMs. 
     Before we can customize your PRO in-ear monitors, we need your impressions.
   </p>
   <p>
@@ -56,8 +52,8 @@
     your impressions being unusable. 
   </p>
   <p>
+    Once you have your physical impressions, please ship them to:<br/><br/> 
     <strong>
-    Once you have your physical impressions, please ship them to:<br/> 
     Ultimate Ears Pro {{ order_number }}<br/>
     3 Jenner Street<br/>
     Suite 180<br/>
@@ -65,15 +61,17 @@
     (800) 589-6531<br/>
     </strong>
   </p>
-  <a id="btn" href="">
-    <!--[if mso]>
-    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+  <div class="p-30-all-around">
+    <a id="btn" href="">
+      <!--[if mso]>
+      <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+        <![endif]-->
+      <span style="mso-text-raise: 15pt;"><strong>Audiologist Instructions</strong></span>
+      <!--[if mso]>
+        <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
       <![endif]-->
-    <span style="mso-text-raise: 15pt;"><strong>Audiologist Instructions</strong></span>
-    <!--[if mso]>
-      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
-    <![endif]-->
-  </a>
+    </a>
+  </div>
   <p>
     If you’re an existing customer or if we have your 3D scans on file, we’ll start working 
     on your in-ear monitors right away. You can expect an update from us shortly with an 
@@ -81,7 +79,8 @@
   </p>
 {% elsif isMonitor %}
     <p>
-      Hi {{ customer.first_name }}, 
+      <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+
       Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you the premium 
       listening experience you’ve been waiting for.
     </p>
@@ -152,6 +151,19 @@
     <![endif]-->
   </a>
 {% endcapture %}
+{% comment %}
+//// SOCIAL ICONS /////
+{% endcomment %}
+{% capture social %}
+    <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-fb.png' | file_url}}"/></a>
+    <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'icon-insta.png' | file_url}}"/></a>
+    <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-twitter.png' | file_url}}"/></a>
+    {% if isPro or isMonitor %}
+      <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
+    {% elsif isFits %}
+      <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
+    {% endif %}
+{% endcapture %}
 
 {% capture copyright %}
   <p>
@@ -185,7 +197,7 @@
       text-decoration: underline;
     }
     #btn {
-      width: 200px;
+      min-width: 200px;
       background-color: black; 
       font-size: 18px; 
       font-family: Helvetica, Arial, sans-serif; 
@@ -365,15 +377,12 @@
 ​
 <body class="clean-body">
 
-  <div style="width: 60%; margin: 2rem auto; border: 1px solid red; word-wrap: break-word;">
-   {% comment %} <p>item_count: {{item_count}}</p>
-   <p>line product title: {{line.product.title}}</p> {% endcomment %}
+  <div style="width: 90%; margin: .5rem; border: 1px solid red; word-wrap: break-word;">
+   {% comment %} <p>item_count: {{item_count}}</p> {% endcomment %}
+   {{ 'icon-fb.png' | file_url}}
   {% for  line in line_items %}
-    <div class="p-30-all-around py-30" align="center">
-      <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="60" height="auto"
-                            class="order-list__product-image" /><span>{{line.title}} </span><br/>
-        
-    </div>
+   <span>line product type: {{line.product.type}}</span><br/>
+    line item: <span style=:>{{line.title}} </span><br/>
   {% endfor %}
    {% comment %} <p>customer: {{customer.first_name}}</p>
    <p>order status url: {{order_status_url}}</p> {% endcomment %}
@@ -650,6 +659,14 @@
               </td>
             </tr>
           </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-30-all-around" align="center">
+           {{ social }}
+          </div>
         </td>
       </tr>
 

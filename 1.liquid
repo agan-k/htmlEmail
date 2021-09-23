@@ -1,11 +1,15 @@
 {% comment %}
 //// ASSIGN PRODUCT ///// 
+************************
+To switch between the templates 
+assign boolean to the product
+************************
 {% endcomment %}
 {% assign isPro = false %}
 {% assign isMonitor = false %}
 {% assign isFits = true %}
 {% assign isAccsOnly = false %}
-{% comment %} {% for line in line_items %}
+{% for line in line_items %}
   {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
    {% assign isPro = true %}
   {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
@@ -15,7 +19,7 @@
   {% elsif line.product.type == "Accessories" %}
    {% assign isAccsOnly = true %}
   {% endif %}
-{% endfor %} {% endcomment %}
+{% endfor %}
 {% comment %} 
 ////// EMAIL TITLE /////
 {% endcomment %}
@@ -30,8 +34,26 @@
     Your Premium Listening Experience Awaits
   {% elsif isFits %}
     {{ customer.first_name }}, Your UE FITS Order is Confirmed!
-  {% elsif isAccOnly %}
-    Accessories Only!
+  {% elsif isAccsOnly %}
+    We’re Working<br/> On Your Order
+  {% endif %}
+{% endcapture %}
+{% comment %}
+////// ORDER PROGRESS BAR ////////
+{% endcomment %}
+{% capture order_progress_bar %}
+  {% if isPro %}
+    <img align="center" border="0"
+      src="{{ 'pro-order-confirmed.png' | file_url }}"
+      alt="" title="" width="464" />
+  {% elsif isMonitor %}
+    <img align="center" border="0"
+      src="{{ 'csx-order-confirmed.png' | file_url }}"
+      alt="" title="" width="464" />
+  {% elsif isFits %}
+    <img align="center" border="0"
+      src="{{ 'fits-order-confirmed.png' | file_url }}"
+      alt="" title="" width="464" />
   {% endif %}
 {% endcapture %}
 {% comment %}
@@ -41,7 +63,7 @@
   {% if isPro %}
   <p>
     <strong>Hi {{ customer.first_name }},</strong><br/><br/>
-    Thank you for your order {{ order_number }}. We can’t wait to get you your custom IEMs. 
+    Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you your custom IEMs. 
     Before we can customize your PRO in-ear monitors, we need your impressions.
   </p>
   <p>
@@ -62,7 +84,7 @@
     </strong>
   </p>
   <div class="p-30-all-around">
-    <a id="btn" href="">
+    <a id="btn" href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-">
       <!--[if mso]>
       <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
         <![endif]-->
@@ -103,6 +125,14 @@
       </span></strong>
       or live chat with us on our website.
     </p>
+  {% elsif isAccsOnly %}
+    <p>
+      <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+
+      Your Ultimate Ears Order [order#] is confirmed! We’ll be in touch with tracking 
+      information as soon as your order is ready to ship. 
+
+    </p>
   {% endif %}
 {% endcapture %}
 {% comment %}
@@ -123,33 +153,71 @@
     <![endif]-->
   </a>
 {% endcapture %}
+{% comment %}
+////  CONTACT US MESSAGE /////
+{% endcomment %}
 {% capture contact_us_message %}
-  <h2>Have Questions?</h2>
-  <p>
-    Our customer support team is happy to help answer any questions you have about your 
-    order and your UE FITS!
-  </p>
+  {% if isPro or isMonitor %}
+    <h2>White Glove Service</h2>
+    <p>
+      Our team of experts are here to help and guide you every step of the way. 
+      If you need anything or have questions, contact the UE team via our live chat, 
+      email, or phone.
+    </p>
+  {% elsif isFits %}
+    <h2>Have Questions?</h2>
+    <p>
+      Our customer support team is happy to help answer any questions you have about your 
+      order and your UE FITS!
+    </p>
+  {% elsif isAccsOnly %}
+    <h2>We’re Here To Help!</h2>
+  {% endif %}
 {% endcapture %}
-{% capture contact_us_email %}
-  <h3 style="text-transform: uppercase;">EMAIL</h3>
-  <p>
-    <strong><span>us at fits@ultimateears.com</span></strong>
-  </p>
-{% endcapture %}
-{% capture contact_us_livechat %}
-  <h3 style="text-transform: uppercase;">LIVE CHAT</h3>
-  <p>
-    <strong><span>with a real person on our website</span></strong>
-  </p>
-  <a id="btn" href="https://custom.ultimateears.com/pages/contact">
-    <!--[if mso]>
-    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
-      <![endif]-->
-    <span style="mso-text-raise: 15pt;"><strong>View Order</strong></span>
-    <!--[if mso]>
-      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
-    <![endif]-->
-  </a>
+{% comment %}
+////  CONTACT US BODY /////
+{% endcomment %}
+{% capture contact_us_body %}
+  <div {% if isFits %} class="purple pb-30 pt-15" {% else %} class="black pb-30 pt-15" style="color: white;" {% endif %} align="center">
+    <h3 style="text-transform: uppercase; margin: 0;">EMAIL</h3>
+    {% if isFits %}
+      <p>
+        <strong><span>us at fits@ultimateears.com</span></strong>
+      </p>
+    {% else %}
+      <p>
+        <strong><span>us at customs@ultimateears.com</span></strong>
+      </p>
+    {% endif %}
+
+      <h3 style="text-transform: uppercase; margin: 30px 0 0 0;">LIVE CHAT</h3>
+      <p>
+        <strong><span>with a real person on our website</span></strong>
+      </p>
+      {% if isFits%}
+        <a id="btn" href="https://custom.ultimateears.com/pages/contact">
+          <!--[if mso]>
+          <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+            <![endif]-->
+          <span style="mso-text-raise: 15pt;"><strong>Let's Chat</strong></span>
+          <!--[if mso]>
+            <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+          <![endif]-->
+        </a>
+      {% else %}
+        <h3 style="text-transform: uppercase; margin: 30px 0 0 0;">CALL US</h3>
+        <strong><span>(424) 342-5759</span></strong><br/><br/>
+        <a id="btn" style="background-color: white; color: black;" href="https://custom.ultimateears.com/pages/contact">
+          <!--[if mso]>
+          <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+            <![endif]-->
+          <span style="mso-text-raise: 15pt;"><strong>Let's Chat</strong></span>
+          <!--[if mso]>
+            <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+          <![endif]-->
+        </a>
+  </div>
+      {% endif %}
 {% endcapture %}
 {% comment %}
 //// SOCIAL ICONS /////
@@ -203,7 +271,8 @@
       font-family: Helvetica, Arial, sans-serif; 
       font-weight: bold; 
       text-decoration: none; 
-      padding: 14px 20px; 
+      padding: 14px 20px;
+      margin-top: 15px; 
       color: white; 
       border-radius: 30px; 
       display: inline-block; 
@@ -230,6 +299,10 @@
     .px-60 {
       padding-right: 60px;
       padding-left: 60px;
+    }
+    .px-30 {
+      padding-right: 30px;
+      padding-left: 30px;
     }
     .py-30 {
       padding-top: 30px;
@@ -266,7 +339,7 @@
 ​
     .social__icon {
       padding-right: 10px;
-      width: 30px;
+      width: 20px;
       margin: 0 10px;
     }
 ​
@@ -351,6 +424,10 @@
       color: inherit !important;
       text-decoration: none !important;
     }
+
+    .black {
+      background-color: black;
+    }
 ​
     .purple {
       background-color: #eee8f6;
@@ -377,16 +454,14 @@
 ​
 <body class="clean-body">
 
-  <div style="width: 90%; margin: .5rem; border: 1px solid red; word-wrap: break-word;">
-   {% comment %} <p>item_count: {{item_count}}</p> {% endcomment %}
-   {{ 'icon-fb.png' | file_url}}
-  {% for  line in line_items %}
-   <span>line product type: {{line.product.type}}</span><br/>
-    line item: <span style=:>{{line.title}} </span><br/>
-  {% endfor %}
-   {% comment %} <p>customer: {{customer.first_name}}</p>
-   <p>order status url: {{order_status_url}}</p> {% endcomment %}
-  </div>
+ {% comment %} <div style="width: 90%; margin: .5rem; border: 1px solid red; word-wrap: break-word;">
+    {{ 'icon-fb.png' | file_url}}
+    {{order_status_url}}
+    {% for  line in line_items %}
+    <span>line product type: {{line.product.type}}</span><br/>
+      line item: <span style=:>{{line.title}} </span><br/>
+    {% endfor %}
+  </div>  {% endcomment %}
 
   <table class="u-row" cellpadding="0" cellspacing="0">
     <tbody>
@@ -411,7 +486,7 @@
       </tr>
 
       <tr>
-        <td class="p-30-all-around " align="center">
+        <td {% unless isAccsOnly %} class="pt-30 px-30" {% endunless %} align="center">
           <h1 class="v-font-size">
             <strong>{{ header }}</strong>
           </h1>
@@ -420,27 +495,13 @@
 
       <tr>
         <td class="" align="center">
-          {% if isPro %}
-            <img align="center" border="0"
-              src=""
-              alt="" title="" width="464" />
-          {% elsif isMonitor %}
-            <img align="center" border="0"
-              src=""
-              alt="" title="" width="464" />
-          {% elsif isFits %}
-            <img align="center" border="0"
-              src="https://s3.amazonaws.com/unroll-images-production/projects%2F0%2F1631726080958-fits-order-confirmed.png"
-              alt="" title="" width="464" />
-          {% endif %}
+          {{ order_progress_bar }}
         </td>
       </tr>
 
       <tr>
-        <td class="" align="left">
-          <div class="p-30-all-around" align="center">
+        <td {% if isAccsOnly %} class="px-30" {% else %} class="p-30-all-around" {% endif %} align="center">
             {{ confirmation_message }}
-          </div>
         </td>
       </tr>
 
@@ -648,14 +709,10 @@
       </tr>
       <tr>
         <td>
-          <table class="purple" width="100%" align="center">
+          <table width="100%" align="center">
             <tr>
               <td>
-                <div class="pb-30" align="center">
-                  {{contact_us_email}}
-                  <br/>
-                  {{contact_us_livechat}}
-                </div>
+                {{ contact_us_body }}
               </td>
             </tr>
           </table>

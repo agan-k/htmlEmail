@@ -1,0 +1,894 @@
+{% comment %}
+//// ASSIGN PRODUCT ///// 
+{% endcomment %}
+{% assign isPro = false %}
+{% assign isMonitor = false %}
+{% assign isFits = true %}
+{% assign isAccsOnly = false %}
+{% comment %} {% for line in line_items %}
+  {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
+    {% assign isPro = true %}
+    {% assign isMonitor = false %}
+    {% assign isFits = false %}
+    {% assign isAccsOnly = false %}
+  {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
+   {% assign isMonitor = true %}
+    {% assign isFits = false %}
+    {% assign isAccsOnly = false %}
+  {% elsif line.product.type == "UE Fits" %}
+   {% assign isFits = true %}
+    {% assign isAccsOnly = false %}
+  {% elsif line.product.type == "Accessories" %}
+   {% assign isAccsOnly = true %}
+  {% endif %}
+{% endfor %} {% endcomment %}
+{% comment %} 
+////// EMAIL TITLE /////
+{% endcomment %}
+{% capture email_title %}Thank you for your order! {% endcapture %}
+{% comment %}
+////// HEADER ////////
+{% endcomment %}
+{% capture header %}
+  {% if isPro %}
+    Create. Perform. Stream.
+  {% elsif isMonitor %}
+    Your Premium Listening Experience Awaits
+  {% elsif isFits %}
+    Get Excited!
+  {% elsif isAccsOnly %}
+    We’re Working<br/> On Your Order
+  {% endif %}
+{% endcapture %}
+{% comment %}
+////// ORDER PROGRESS BAR ////////
+{% endcomment %}
+{% capture order_progress_bar %}
+  <div style="margin-bottom: 25px;">
+    {% if isPro %}
+      <img align="center" border="0"
+        src="{{ 'pro-shipped.png' | file_url }}"
+        alt="" title="" width="464" />
+    {% elsif isMonitor %}
+      <img align="center" border="0"
+        src="{{ 'csx-shipped.png' | file_url }}"
+        alt="" title="" width="464" />
+    {% elsif isFits %}
+      <img align="center" border="0"
+        src="{{ 'fits-shipped.png' | file_url }}"
+        alt="" title="" width="464" />
+    {% endif %}
+  </div>
+{% endcapture %}
+{% comment %}
+//// CONFIRMATION MESSAGE /////
+{% endcomment %}
+{% capture confirmation_message %}
+  <div style="padding: 0 30px;">
+    {% if isPro %}
+    <p>
+      <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+      Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you your custom IEMs. 
+      Before we can customize your PRO in-ear monitors, we need your impressions.
+    </p>
+    <p>
+      <strong>If you’re sending us physical molds, please share 
+      <a href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-">these instructions</a>
+      with your audiologist</strong> to ensure they capture all of the information needed to craft your IEMs. 
+      Your impressions should look similar to the sample impression in terms of canal size, detail and base
+      width. Failing to capture all of the information we need may result in your impressions being unusable. 
+    </p>
+    <p>
+      Once you have your physical impressions, please ship them to:<br/><br/> 
+      <strong>
+      Ultimate Ears Pro {{ order_number }}<br/>
+      3 Jenner Street<br/>
+      Suite 180<br/>
+      Irvine, CA 92618<br/>
+      (800) 589-6531<br/>
+      </strong>
+    </p>
+    <div>
+      <a id="btn" href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-" style="margin-bottom: 30px;">
+        <!--[if mso]>
+        <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+          <![endif]-->
+        <span style="mso-text-raise: 15pt;" ><strong>Audiologist Instructions</strong></span>
+        <!--[if mso]>
+          <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+        <![endif]-->
+      </a>
+    </div>
+    <p>
+      <strong>If you’re an existing customer or if we have your 3D scans on file</strong>, we’ll start working 
+      on your in-ear monitors right away. You can expect an update from us shortly with an 
+      anticipated completion date. 
+    </p>
+  </div>
+  <div style="border-top: 1px solid #DBDBDB; margin: 30px 0 50px;">
+    <h2>Your Order Details</h2>
+  </div>
+  {% elsif isMonitor %}
+      <p>
+        <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+
+        Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you the premium 
+        listening experience you’ve been waiting for.
+      </p>
+      <p>
+        Before we can customize your CSX earphones, we’ll send you your UE FitKit. 
+        You will receive a shipping confirmation email with tracking information when 
+        your FitKit ships.
+      </p>
+    {% elsif isFits %}
+      <p>
+        Hey {{ customer.first_name }}, order <strong>{{ order_number }}</strong> has shipped! Follow its journey 
+        at <strong>&nbsp;<a href="{{order_status_url}}">here</strong></a>. 
+      </p>
+    {% elsif isAccsOnly %}
+      <p>
+        <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+
+        Your Ultimate Ears Order [order#] is confirmed! We’ll be in touch with tracking 
+        information as soon as your order is ready to ship. 
+
+      </p>
+    {% endif %}
+  
+  
+{% endcapture %}
+{% comment %}
+////  ORDER TRACKING Button /////
+{% endcomment %}
+{% capture order_tracking %}
+  <a id="btn" href="{{order_status_url}}">
+    <!--[if mso]>
+    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+      <![endif]-->
+    <span style="mso-text-raise: 15pt;"><strong>Track Order</strong></span>
+    <!--[if mso]>
+      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+    <![endif]-->
+  </a>
+{% endcapture %}
+{% comment %}
+////  CONTACT US MESSAGE /////
+{% endcomment %}
+{% capture contact_us_message %}
+  {% if isFits %}
+    <h2>Have Questions?</h2>
+    <p>
+      Our customer support team is happy to help answer any questions you have about your 
+      order and your UE FITS!
+    </p>
+  {% elsif isAccsOnly %}
+    <h2>We’re Here To Help!</h2>
+  {% else %}
+    <h2>White Glove Service</h2>
+    <p>
+      Our team of experts are here to help and guide you every step of the way. 
+      If you need anything or have questions, contact the UE team via our live chat, 
+      email, or phone.
+    </p>
+  {% endif %}
+{% endcapture %}
+{% comment %}
+////  CONTACT US BODY (purple or black box) /////
+{% endcomment %}
+{% capture contact_us_body %}
+  <div {% if isFits %} class="purple pt-20 pb-25" {% else %} style="color: white;" class="black pt-20 pb-25" {% endif %} align="center">
+    <h3 style="text-transform: uppercase; margin: 0;">EMAIL</h3>
+    {% if isFits %}
+      <p>
+        <strong><span class="email-link">us at fits@ultimateears.com</span></strong>
+      </p>
+      {% else %}
+      <p>
+        <strong><span class="email-link">us at customs@ultimateears.com</span></strong>
+      </p>
+    {% endif %}
+
+    <h3 style="text-transform: uppercase; margin: 30px 0 0 0;">LIVE CHAT</h3>
+    <p>
+      <strong><span>with a real person on our website</span></strong>
+    </p>
+    {% if isFits%}
+      <a id="btn" href="https://custom.ultimateears.com/pages/contact">
+        <!--[if mso]>
+        <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+          <![endif]-->
+        <span style="mso-text-raise: 15pt;"><strong>Let's Chat</strong></span>
+        <!--[if mso]>
+          <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+        <![endif]-->
+      </a>
+    {% else %}
+      <h3 style="text-transform: uppercase; margin: 30px 0 0 0;">CALL US</h3>
+      <strong><span>(424) 342-5759</span></strong><br/><br/>
+      <a id="btn" style="background-color: white; color: black;" href="https://custom.ultimateears.com/pages/contact">
+        <!--[if mso]>
+        <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+          <![endif]-->
+        <span style="mso-text-raise: 15pt;"><strong>Let's Chat</strong></span>
+        <!--[if mso]>
+          <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+        <![endif]-->
+      </a>
+  </div>
+      {% endif %}
+{% endcapture %}
+{% comment %}
+//// SOCIAL ICONS /////
+{% endcomment %}
+{% capture social %}
+    <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-fb.png' | file_url}}"/></a>
+    <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'icon-insta.png' | file_url}}"/></a>
+    <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-twitter.png' | file_url}}"/></a>
+    {% if isPro or isMonitor %}
+      <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
+    {% elsif isFits %}
+      <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
+    {% endif %}
+{% endcapture %}
+
+{% capture copyright %}
+  <p>
+    <small>
+      &copy; 2021 Ultimate Ears. All Rights Reserved.<br/>
+      Want to change how you receive these emails? Update your email preferences or unsubscribe from the list.
+    </small>
+  </p>
+{% endcapture %}
+​
+<!DOCTYPE html>
+<html lang="en">
+​
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>{{ email_title }}</title>
+​
+  <style type="text/css">
+    /*@font-face {
+    font-family: 'akzidenz-grotesk';
+    font-style: normal;
+    font-weight: normal;
+    src:
+      local('Berthold Akzidenz Grotesk BE Regular'),
+      url('https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFVZ0bf8pkAg.woff2') format('woff');
+    }*/
+    table,
+    td {
+      color: #000000;
+    }
+​
+    a {
+      color: #000000;
+      text-decoration: underline;
+    }
+    /* override blue underline in phone emails */
+    a [x-apple-data-detectors] {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    }
+    .email-link [x-apple-data-detectors] {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    }
+    #btn {
+      max-width: 280px;
+      background-color: black; 
+      font-size: 18px; 
+      /*font-family: 'akzidenz-grotesk', Arial, sans-serif;*/ 
+      font-weight: bold; 
+      text-decoration: none; 
+      padding: 14px 50px;
+      /*margin-bottom: 30px; */
+      color: white; 
+      border-radius: 30px; 
+      display: inline-block; 
+      mso-padding-alt: 0;
+    }
+
+    hr {
+      border-top: 1px solid #FAF9F7;
+      margin-bottom: 30px;
+    }
+    .social__row {
+      padding: 15px;
+      text-align: center;
+    }
+​
+    .center {
+      text-align: center;
+    }
+
+    .px-60 {
+      padding-right: 60px;
+      padding-left: 60px;
+    }
+    .px-30 {
+      padding-right: 30px;
+      padding-left: 30px;
+    }
+    .py-30 {
+      padding-top: 30px;
+      padding-bottom: 30px;
+    }
+    .py-15 {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+    .pt-15 {
+      padding-top: 15px;
+    }
+    .pt-20 {
+      padding-top: 20px;
+    }
+    .pt-30 {
+      padding-top: 30px;
+    }
+    .pb-15 {
+      padding-bottom: 15px;
+    }
+    .pb-25 {
+      padding-bottom: 25px;
+    }
+    .pb-30 {
+      padding-bottom: 30px;
+    }
+    .p-15-all-around {
+      padding: 15px;
+    }
+    .p-30-all-around {
+      padding: 30px;
+    }
+    .my-30 {
+      margin: 30px 0;
+    }
+​
+    .social__icon {
+      padding-right: 10px;
+      width: 20px;
+      margin: 0 10px;
+    }
+​
+    @media (max-width: 480px) {
+      #u_content_heading_1 .v-font-size {
+        font-size: 30px !important;
+      }
+​
+      #u_content_text_2 . {
+        padding: 10px !important;
+      }
+    }
+​
+    @media only screen and (min-width: 620px) {
+      .u-row {
+        width: 600px !important;
+        margin: 0 auto;
+      }
+​
+      .u-row .u-col {
+        vertical-align: top;
+      }
+    }
+​
+    @media (max-width: 620px) {
+      .u-row-container {
+        max-width: 100% !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+      }
+​
+      .u-row .u-col {
+        min-width: 320px !important;
+        max-width: 100% !important;
+        /* display: block !important; */
+      }
+​
+      .u-row {
+        width: calc(100% - 40px) !important;
+        margin: 0 auto;
+      }
+​
+      .u-col {
+        width: 100% !important;
+      }
+​
+      .u-col>div {
+        margin: 0 auto;
+      }
+    }
+​
+    body {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0;
+      font-family: 'akzidenz-grotesk', Arial, sans-serif;
+      font-size: 18px;
+    }
+​
+    table,
+    tr,
+    td {
+      vertical-align: top;
+      border-collapse: collapse;
+    }
+​
+    p {
+      margin: 0 0 30px;
+      line-height: 125%;
+    }
+    p small {
+      color: grey;
+    }
+​
+    .ie-container table,
+    .mso-container table {
+      table-layout: fixed;
+    }
+​
+    * {
+      line-height: inherit;
+    }
+​
+    a[x-apple-data-detectors="true"] {
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+
+    .black {
+      background-color: black;
+    }
+​
+    .purple {
+      background-color: #eee8f6;
+    }
+​
+    .offwhite {
+      background-color: #faf9f7;
+    }
+​
+    .order-list__product-description-cell {
+      width: 50%;
+    }
+    .order-list__item-price {
+      margin: 0; 
+    }
+​
+    .vert-center {
+      vertical-align: middle;
+    }
+  </style>
+​
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+</head>
+​
+<body class="clean-body">
+
+ {% comment %} <div style="width: 90%; margin: 0 auto; border: 1px solid red; word-wrap: break-word; padding: .8rem;">
+    order status url: {{order_status_url}}<br/>
+    {% for  line in line_items %}<br/>
+      <span>line product type: {{line.product.type}}</span><br/>
+      <span> line_title (line or product) next line -> </span><br/>
+      <span> line.title: {{line.title}} </span><br/>
+      <span> product.title: {{line.product.title}} </span><br/>
+      <span> line variant.title: {{line.variant.title}} </span><br/>
+      <hr/>
+      {% for  prop in line.properties %}
+        <span>line.properties: {{prop.first}}: {{prop.last}}</span><br/>
+      {% endfor %}
+    {% endfor %}
+  </div> {% endcomment %}
+
+  <table class="u-row" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td align="center">
+          <a href="{{shop.url}}" target="_blank">
+            {%- if shop.email_logo_url %}
+              <img align="center" border="0" src="{{shop.email_logo_url}}" alt="" title="" width="116" />
+            {%- else %}
+            <h1 class="shop-name__text">
+              <a href="{{shop.url}}">{{ shop.name }}</a>
+            </h1>
+            {%- endif %}
+          </a>
+        </td>
+      </tr>
+
+      <tr>
+        <td {% unless isAccsOnly %} class="pt-30 px-30" {% endunless %} align="center">
+          <h1 class="v-font-size">
+            <strong>{{ header }}</strong>
+          </h1>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="" align="center">
+          {{ order_progress_bar }}
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center">
+            {{ confirmation_message }}
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div align="center" style="margin-bottom: 40px;">
+            {{ order_tracking }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          {% comment %} ////// LINE ITEMS //// {% endcomment %}
+            {% for line in line_items %}
+              {% capture line_image %}
+                {% if line.properties and line.properties._image %}
+                  <img src="{{ line.properties._image}}" align="left" class="order-list__product-image" />
+                {% elsif line.image %}
+                  <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="100" height="auto"
+                    class="order-list__product-image" />
+                {% endif %}
+              {% endcapture %}
+
+              {% capture line_info_fitsaccs %}
+                {% if line.product.title %}
+                  {% assign line_title = line.product.title %} 
+                  {% else %} 
+                  {% assign line_title = line.title %} 
+                {% endif %} 
+                {% if line.quantity < line.quantity %} 
+                  {% capture line_display %} 
+                    {{ line.quantity }} of {{ line.quantity }} 
+                  {% endcapture %} 
+                {% else %} 
+                  {% assign line_display=line.quantity %} 
+                {% endif %} 
+                <strong><span class="order-list__item-title">
+                  {{ line_title }} × {{ line_display }}
+                </span></strong><br />
+                {% comment %} <span>fitsAccs_key: fitsAccs_value</span> {% endcomment %}
+                {% comment %} 
+                ++++++++++Check if variant title is necessary!!!!!!!!!!!!!!
+                {% if line.variant.title != 'Default Title' %}
+                  <span class="order-list__item-variant">variant title: {{ line.variant.title }}</span>
+                {% endif %} {% endcomment %}
+
+              {% endcapture %}
+
+              {% capture line_info1_procsx %}
+                {% if line.product.title %}
+                  {% assign line_title = line.product.title %} 
+                  {% else %} 
+                  {% assign line_title = line.title %} 
+                {% endif %}
+                <strong>
+                  <span class="order-list__item-title"> {{ line_title }}</span><br />
+                </strong>
+                  {% comment %} <span>info1_key: info1_value</span><br/> {% endcomment %}
+                {% for prop in line.properties reversed %}
+                  {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
+                  {% unless prop.last == blank %}
+                    {% if prop.first contains '_' %}
+                      {% assign prop_key = prop.first | split: '_' | last | capitalize %}
+                    {% else %}
+                      {% assign prop_key = prop.first %}
+                    {% endif %}
+                    {% if prop.last contains '-' %}
+                      {% assign prop_value = prop.last | replace: '-', ' ' %}
+                    {% else %}
+                      {% assign prop_value = prop.last %}
+                    {% endif %}
+                    {% if prop.last contains '|' %}
+                      {% assign prop_value = prop.last | split: '|' | first %}
+                    {% else %}
+                      {% assign prop_value = prop.last %}
+                    {% endif %}
+                  {% endunless %}
+
+                  {% case prop_key %}
+                    {% when "Model" %}
+                      <span>{{prop_key}}: {{prop_value}}</span><br/>
+                    {% when "Base Model" %}
+                      <span>{{prop_key}}: {{prop_value}}</span><br/>
+                    {% when "User" %}
+                      <span>{{prop_key}}: {{prop_value}}</span><br/>
+                    {% when "Plate L" %}
+                      <span>Left Faceplate: {{prop_value}}</span><br/>
+                    {% when "Plate R" %}
+                      <span>Right Faceplate: {{prop_value}}</span><br/>
+                  {% endcase %}
+
+                {% endfor %}
+              {% endcapture %}
+              
+              {% capture line_info2_procsx %}
+                {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
+                {% for prop in line.properties reversed %}
+                    {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
+                    {% unless prop.last == blank %}
+                      {% if prop.first contains '_' %}
+                        {% assign prop_key = prop.first | split: '_' | last | capitalize %}
+                      {% else %}
+                        {% assign prop_key = prop.first %}
+                      {% endif %}
+                      {% if prop.last contains '-' %}
+                        {% assign prop_value = prop.last | replace: '-', ' ' %}
+                      {% else %}
+                        {% assign prop_value = prop.last %}
+                      {% endif %}
+                    {% endunless %}
+                  
+                  {% case prop_key %}
+                    {% when "Logo" %}
+                      <span>{{prop_key}}: {{prop_value}}</span><br/>
+                    {% when "Cable" %}
+                      <span>{{prop_key}}: {{prop_value}}</span><br/>
+                    {% when "Case" %}
+                      <span>Free {{prop_key}}: {{prop_value}}</span><br/>
+                    {% when "Case Engraving" %}
+                      {% assign items = prop_key | split: ' ' %}
+                      {% capture multy_word_key %}
+                        {% for item in items %}
+                          {{ item | capitalize }}
+                          {% endfor %}
+                      {% endcapture %}
+                    <span>{{multy_word_key}}: <br/> {{prop_value}}</span><br/>
+                  {% endcase %}
+                {% endfor %}
+              {% endcapture %}
+
+              {% capture line_price %}
+                {% if line.original_line_price != line.line_price %}
+                  <del class="order-list__item-original-price">{{ line.original_line_price | money }}</del><br/>
+                {% endif %}
+                  <strong><span class="order-list__item-price">{{ line.line_price | money }}</span></strong>
+              {% endcapture %}
+            
+              <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+                <tr>
+                  <td width="20%" valign="top">
+                    {{ line_image }}
+                  </td>
+                  <td width="33%" valign="top">
+                    {% if line_title contains "PRO" or line_title contains "Live" %}
+                      {% assign title_has_pro = true %}
+                    {% endif %}
+                    {% if line_title contains "CSX" %}
+                      {% assign title_has_csx = true %}
+                    {% endif %}
+                    {% if title_has_pro or title_has_csx %}
+                      {% assign title_has_pro_csx = true %}
+                    {% endif %}
+                    {% for prop in line.properties %}
+                      {% if  prop.first == 'Base Model'%}
+                        {% assign base_model_value = prop.last %}
+                      {% endif %}
+                    {% endfor %}
+                    {% comment %} Use base_model_value or title_has_ to determine if configurator item {% endcomment %}
+                    {% if base_model_value != blank %}
+                      {{ line_info1_procsx}}
+                    {% else %}
+                      {{ line_info_fitsaccs}}
+                    {% endif %}
+                  </td>
+                  <td width="40%" valign="top">
+                    {{ line_info2_procsx }}
+                  </td
+                </tr>
+                <tr>
+                  <td width="20%"></td>
+                  <td width="40%"></td>
+                  <td width="40%" align="right">
+                    {{ line_price }}
+                  </td>
+                </tr>
+              </table>
+            {% endfor %}  
+          {% comment %} ////// Line Items END //// {% endcomment %}
+        </td>
+      </tr>
+      
+      <tr>
+        <td>
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 14px;">
+            <tbody>
+              <tr>
+                {% if discount != blank %}
+                  <td width="60%"></td>
+                  <td class="" align="left">
+                    <p>Discount</p>
+                  </td>
+                  <td class="" align="right">
+                    <strong>{{ discount_amount }}</strong>
+                  </td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td width="60%"></td>
+                <td class="" align="left">
+                  <p>Subtotal</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ subtotal_price | money }}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td width="60%"></td>
+                <td class="" align="left">
+                  <p>Shipping</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ shipping_price | money }}</strong>
+                </td>
+              </tr>
+              {% for line in tax_lines %}
+                <tr>
+                  <td width="60%"></td>
+                  <td class="" align="left">
+                    <p>
+                      {{ line.title }}
+                      {% for p in line.properties %}
+                        {% unless p.last == blank %}
+                         - {{ p.first }}: {{ p.last }}
+                        {% endunless %}
+                      {% endfor %}
+                    </p>
+                  </td>
+                  <td class="" align="right">
+                    <strong>{{ line.price | money }}</strong>
+                  </td>
+                </tr>
+              {% endfor %}
+
+              <tr>
+                <td width="60%"></td>
+                <td class="" align="left">
+                  <p>Total</p>
+                </td>
+                <td class="" align="right">
+                  <strong>{{ total_price | money_with_currency }}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table class="offwhite" width="100%" style="font-size: 14px;">
+            <tbody>
+              <tr>
+                <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                    <tbody width="30%">
+                      <tr>
+                        <td class="" align="left">
+                          <p style="margin-bottom: 15px;">
+                            <strong>Shipping Address</strong>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="" align="left">
+                          <p style="margin-bottom: 15px;">
+                            {{ shipping_address.name }}<br />
+                            {{ shipping_address.address1 }}<br />
+                            {% if shipping_address.address2 != blank %} 
+                              {{ shipping_address.address2 }}<br />
+                            {% endif %} 
+                            {{ shipping_address.city }}, 
+                            {{ shipping_address.province_code }}
+                            {{ shipping_address.zip }}<br />
+                            {{ shipping_address.country }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                    <tbody>
+                      <tr>
+                        <td class="" align="left">
+                          <p style="margin-bottom: 15px;">
+                            <strong>Billing Address</strong>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="" align="left">
+                          {% if billing_address == shipping_address %}
+                          <p style="margin-bottom: 15px;">
+                            Same as shipping address.
+                          </p>
+                          {% else %}
+                            <p style="margin-bottom: 15px;">
+                              {{ billing_address.name }}<br />
+                              {{ billing_address.address1 }}<br />
+                              {% if billing_address.address2 != blank %} 
+                                {{billing_address.address2 }}<br />
+                              {% endif %} 
+                              {{ billing_address.city }}, 
+                              {{ billing_address.province_code }} 
+                              {{ billing_address.zip }}<br />
+                              {{ billing_address.country }}
+                            </p>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-30-all-around" align="center">
+            {{ order_tracking }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-15-all-around" align="center">
+            {{ contact_us_message }}
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table width="100%" align="center">
+            <tr>
+              <td>
+                {{ contact_us_body }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="p-30-all-around" align="center" style="margin: 28px 0 26px">
+           {{ social }}
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="px-30" align="center">
+           {{ copyright }}
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>    
+</body>     

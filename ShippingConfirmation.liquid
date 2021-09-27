@@ -3,6 +3,7 @@
 {% endcomment %}
 {% assign isPro = false %}
 {% assign isMonitor = false %}
+{% assign isFitKit = false %}
 {% assign isFits = true %}
 {% assign isAccsOnly = false %}
 {% comment %} {% for line in line_items %}
@@ -33,7 +34,7 @@
   {% if isPro %}
     Create. Perform. Stream.
   {% elsif isMonitor %}
-    Your Premium Listening Experience Awaits
+    You’re One Step Closer to Your CSX Earphones
   {% elsif isFits %}
     Get Excited!
   {% elsif isAccsOnly %}
@@ -51,7 +52,7 @@
         alt="" title="" width="464" />
     {% elsif isMonitor %}
       <img align="center" border="0"
-        src="{{ 'csx-shipped.png' | file_url }}"
+        src="{{ 'csx-fitkit-shipped.png' | file_url }}"
         alt="" title="" width="464" />
     {% elsif isFits %}
       <img align="center" border="0"
@@ -108,17 +109,12 @@
   <div style="border-top: 1px solid #DBDBDB; margin: 30px 0 50px;">
     <h2>Your Order Details</h2>
   </div>
-  {% elsif isMonitor %}
+  {% elsif isFitKit %}
       <p>
         <strong>Hi {{ customer.first_name }},</strong><br/><br/>
 
-        Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you the premium 
-        listening experience you’ve been waiting for.
-      </p>
-      <p>
-        Before we can customize your CSX earphones, we’ll send you your UE FitKit. 
-        You will receive a shipping confirmation email with tracking information when 
-        your FitKit ships.
+        Your FitKit for order <strong>{{ order_number }}</strong> is officially on its way. You can follow 
+        its progress via tracking <strong>&nbsp;<a href="{{order_status_url}}">number</strong></a>.
       </p>
     {% elsif isFits %}
       <p>
@@ -477,20 +473,13 @@
 ​
 <body class="clean-body">
 
- {% comment %} <div style="width: 90%; margin: 0 auto; border: 1px solid red; word-wrap: break-word; padding: .8rem;">
-    order status url: {{order_status_url}}<br/>
-    {% for  line in line_items %}<br/>
-      <span>line product type: {{line.product.type}}</span><br/>
-      <span> line_title (line or product) next line -> </span><br/>
-      <span> line.title: {{line.title}} </span><br/>
-      <span> product.title: {{line.product.title}} </span><br/>
-      <span> line variant.title: {{line.variant.title}} </span><br/>
-      <hr/>
-      {% for  prop in line.properties %}
-        <span>line.properties: {{prop.first}}: {{prop.last}}</span><br/>
-      {% endfor %}
+ <div style="width: 90%; min-height: 300px; margin: 0 auto; border: 1px solid red; word-wrap: break-word; padding: .8rem;">
+    {% for line in fulfillment.fulfillment_line_items %}
+      {% if line.line_item.image %}
+            <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
+      {% endif %}
     {% endfor %}
-  </div> {% endcomment %}
+  </div>
 
   <table class="u-row" cellpadding="0" cellspacing="0">
     <tbody>
@@ -528,7 +517,7 @@
         </td>
       </tr>
 
-      <tr>
+      <tr {% unless isFits %} style="display: none;" {% endunless %}>
         <td>
           <div align="center" style="margin-bottom: 40px;">
             {{ order_tracking }}
@@ -536,11 +525,14 @@
         </td>
       </tr>
 
-      <tr>
+      {% comment %} <tr>
         <td>
-          {% comment %} ////// LINE ITEMS //// {% endcomment %}
-            {% for line in line_items %}
-              {% capture line_image %}
+          <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+            <tr>
+              <td width="20%" valign="top">
+                <h1>Cell1</h1>
+                {% for line in line.items %}
+                  {% capture line_image %}
                 {% if line.properties and line.properties._image %}
                   <img src="{{ line.properties._image}}" align="left" class="order-list__product-image" />
                 {% elsif line.image %}
@@ -548,30 +540,58 @@
                     class="order-list__product-image" />
                 {% endif %}
               {% endcapture %}
+              {{line_image}}
+                {% endfor %}
+              </td>
+              <td width="33%" valign="top">
+                <h1>Cell2</h1>
+              </td>
+              <td width="40%" valign="top">
+                <h1>Cell3</h1>
+              </td
+            </tr>
+            <tr>
+              <td width="20%"></td>
+              <td width="40%"></td>
+              <td width="40%" align="right">
+                <h1>Cell4</h1>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr> {% endcomment %}
+
+      <tr>
+        <td>
+          {% comment %} ////// LINE ITEMS //// {% endcomment %}
+            {% for line in fulfillment.fulfillment_line_items %}
+              {% capture line_image %}
+                {% if line.line_item.image %}
+                  <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="100" class="order-list__product-image"/>
+                {% endif %}
+              {% endcapture %}
 
               {% capture line_info_fitsaccs %}
-                {% if line.product.title %}
-                  {% assign line_title = line.product.title %} 
-                  {% else %} 
-                  {% assign line_title = line.title %} 
-                {% endif %} 
-                {% if line.quantity < line.quantity %} 
+                {% if line.line_item.product.title %}	
+                  {% assign line_title = line.line_item.product.title %}	
+                {% else %}	
+                  {% assign line_title = line.line_item.title %}	
+                {% endif %}
+                {% if line.quantity < line.line_item.quantity %} 
                   {% capture line_display %} 
-                    {{ line.quantity }} of {{ line.quantity }} 
+                    {{ line.quantity }} of {{ line.line_item.quantity }} 
                   {% endcapture %} 
                 {% else %} 
-                  {% assign line_display=line.quantity %} 
+                  {% assign line_display = line.line_item.quantity %} 
                 {% endif %} 
                 <strong><span class="order-list__item-title">
                   {{ line_title }} × {{ line_display }}
                 </span></strong><br />
                 {% comment %} <span>fitsAccs_key: fitsAccs_value</span> {% endcomment %}
-                {% comment %} 
-                ++++++++++Check if variant title is necessary!!!!!!!!!!!!!!
+                
                 {% if line.variant.title != 'Default Title' %}
-                  <span class="order-list__item-variant">variant title: {{ line.variant.title }}</span>
-                {% endif %} {% endcomment %}
-
+                  <span class="order-list__item-variant">{{ line.variant.title }}</span>
+                {% endif %}
               {% endcapture %}
 
               {% capture line_info1_procsx %}
@@ -662,33 +682,27 @@
                 {% endif %}
                   <strong><span class="order-list__item-price">{{ line.line_price | money }}</span></strong>
               {% endcapture %}
-            
-              <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+              {% comment %} ///// isFits LINE ITEMS {% endcomment %}
+              <table width="100%" {% if isFits %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none; border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% endif %}>
+                <tr>
+                  <td width="35%" valign="top">
+                    
+                  </td>
+                  <td width="65%" valign="middle">
+                    {{ line_image }}
+                    {{ line_info_fitsaccs }}
+                  </td>
+                </tr>
+              </table>
+              {% comment %} ///// isFitKit LINE ITEMS {% endcomment %}
+              <table width="100%" {% if isFitKit %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none; border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% endif %}>
                 <tr>
                   <td width="20%" valign="top">
                     {{ line_image }}
+                    
                   </td>
-                  <td width="33%" valign="top">
-                    {% if line_title contains "PRO" or line_title contains "Live" %}
-                      {% assign title_has_pro = true %}
-                    {% endif %}
-                    {% if line_title contains "CSX" %}
-                      {% assign title_has_csx = true %}
-                    {% endif %}
-                    {% if title_has_pro or title_has_csx %}
-                      {% assign title_has_pro_csx = true %}
-                    {% endif %}
-                    {% for prop in line.properties %}
-                      {% if  prop.first == 'Base Model'%}
-                        {% assign base_model_value = prop.last %}
-                      {% endif %}
-                    {% endfor %}
-                    {% comment %} Use base_model_value or title_has_ to determine if configurator item {% endcomment %}
-                    {% if base_model_value != blank %}
-                      {{ line_info1_procsx}}
-                    {% else %}
-                      {{ line_info_fitsaccs}}
-                    {% endif %}
+                  <td width="33%" valign="middle">
+                    {{ line_info_fitsaccs }}
                   </td>
                   <td width="40%" valign="top">
                     {{ line_info2_procsx }}
@@ -707,7 +721,7 @@
         </td>
       </tr>
       
-      <tr>
+      {% comment %} <tr>
         <td>
           <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 14px;">
             <tbody>
@@ -771,13 +785,45 @@
             </tbody>
           </table>
         </td>
-      </tr>
+      </tr> {% endcomment %}
 
       <tr>
         <td>
           <table class="offwhite" width="100%" style="font-size: 14px;">
             <tbody>
-              <tr>
+              <tr {% if isFits %} style="padding: 0 10%; padding-top: 15px;" {% else %} style="display: none;" {% endif %}>
+                <td width="35%"></td>
+                <td class="py-15" width="40%" style="">
+                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                    <tbody width="100%">
+                      <tr>
+                        <td class="" align="left">
+                          <p style="margin-bottom: 15px;">
+                            <strong>Shipping Address</strong>
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="" align="left"
+                          <p style="margin-bottom: 15px;">
+                            {{ shipping_address.name }}<br />
+                            {{ shipping_address.address1 }}<br />
+                            {% if shipping_address.address2 != blank %} 
+                              {{ shipping_address.address2 }}<br />
+                            {% endif %} 
+                            {{ shipping_address.city }}, 
+                            {{ shipping_address.province_code }}
+                            {{ shipping_address.zip }}<br />
+                            {{ shipping_address.country }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td width="25%"></td>
+              </tr>
+              <tr {% if isFitKit %} style="padding: 0 10%; padding-top: 15px;" {% elsif isFits %} style="display: none;" {% endif %}>
                 <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
                   <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                     <tbody width="30%">
@@ -806,7 +852,7 @@
                     </tbody>
                   </table>
                 </td>
-                <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                <td width="40%">
                   <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                     <tbody>
                       <tr>

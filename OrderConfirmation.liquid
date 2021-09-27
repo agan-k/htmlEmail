@@ -1,7 +1,45 @@
 {% comment %}
 //// ASSIGN PRODUCT ///// 
 {% endcomment %}
-{% assign isPro = false %}
+{%- liquid
+	assign isPro = false 
+  assign isMonitor = false 
+  assign isFits = false 
+  assign isAccs = false 
+
+	assign has_Pro = false 
+  assign has_Monitor = false 
+  assign has_Fits = false 
+  assign has_Accs = false 
+
+  for line in line_items 
+    if line.product.type == "pro" or line.product.type == "Pro-Hidden" 
+      assign has_Pro = true
+    elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" 
+      assign has_Monitor = true 
+    elsif line.product.type == "UE Fits" 
+      assign has_Fits = true 
+    elsif line.product.type == "Accessories" 
+      assign has_Accs = true 
+    endif 
+  endfor 
+
+  for line in line_items
+    if has_Pro
+      assign isPro = true
+    elsif has_Pro == false and has_Monitor
+      assign isMonitor = true 
+    elsif has_Pro == false and has_Monitor == false
+      if has_Fits
+        assign isFits = true
+      else 
+        assign isAccss = true
+      endif
+    endif
+  endfor
+-%}
+
+{% comment %} {% assign isPro = false %}
 {% assign isMonitor = false %}
 {% assign isFits = false %}
 {% assign isAccsOnly = false %}
@@ -21,7 +59,8 @@
   {% elsif line.product.type == "Accessories" %}
    {% assign isAccsOnly = true %}
   {% endif %}
-{% endfor %}
+{% endfor %} {% endcomment %}
+
 {% comment %} 
 ////// EMAIL TITLE /////
 {% endcomment %}
@@ -569,7 +608,7 @@
                 <strong><span class="order-list__item-title">
                   {{ line_title }} × {{ line_display }}
                 </span></strong><br />
-                {% comment %} <span>fitsAccs_key: fitsAccs_value</span> {% endcomment %}
+                <span>fitsAccs_key: fitsAccs_value</span>
                 {% comment %} 
                 ++++++++++Check if variant title is necessary!!!!!!!!!!!!!!
                 {% if line.variant.title != 'Default Title' %}
@@ -587,7 +626,7 @@
                 <strong>
                   <span class="order-list__item-title"> {{ line_title }}</span><br />
                 </strong>
-                  {% comment %} <span>info1_key: info1_value</span><br/> {% endcomment %}
+                  <span>info1_key: info1_value</span><br/>
                 {% for prop in line.properties reversed %}
                   {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
                   {% unless prop.last == blank %}
@@ -625,7 +664,7 @@
               {% endcapture %}
               
               {% capture line_info2_procsx %}
-                {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
+                <span>info2_key: info2_value</span><br/>
                 {% for prop in line.properties reversed %}
                     {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
                     {% unless prop.last == blank %}

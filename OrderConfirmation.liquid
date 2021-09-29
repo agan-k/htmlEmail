@@ -38,29 +38,6 @@
     endif
   endfor
 -%}
-
-{% comment %} {% assign isPro = false %}
-{% assign isMonitor = false %}
-{% assign isFits = false %}
-{% assign isAccsOnly = false %}
-{% for line in line_items %}
-  {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
-    {% assign isPro = true %}
-    {% assign isMonitor = false %}
-    {% assign isFits = false %}
-    {% assign isAccsOnly = false %}
-  {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
-   {% assign isMonitor = true %}
-    {% assign isFits = false %}
-    {% assign isAccsOnly = false %}
-  {% elsif line.product.type == "UE Fits" %}
-   {% assign isFits = true %}
-    {% assign isAccsOnly = false %}
-  {% elsif line.product.type == "Accessories" %}
-   {% assign isAccsOnly = true %}
-  {% endif %}
-{% endfor %} {% endcomment %}
-
 {% comment %} 
 ////// EMAIL TITLE /////
 {% endcomment %}
@@ -182,8 +159,6 @@
 
       </p>
     {% endif %}
-  
-  
 {% endcapture %}
 {% comment %}
 ////  ORDER TRACKING /////
@@ -231,11 +206,11 @@
     <h3 style="text-transform: uppercase; margin: 0;">EMAIL</h3>
     {% if isFits %}
       <p>
-        <strong><span class="email-link">us at fits@ultimateears.com</span></strong>
+        <strong><span><a href="mailto:fits@ultimateears.com" style="color:inherit !important; text-decoration: none !important;">us at fits@ultimateears.com</a></span></strong>
       </p>
       {% else %}
       <p>
-        <strong><span class="email-link">us at customs@ultimateears.com</span></strong>
+        <strong><span><a href="mailto:customs@ultimateears.com" style="color:inherit !important; text-decoration: none !important;">us at customs@ultimateears.com</a></span></strong>
       </p>
     {% endif %}
 
@@ -302,14 +277,6 @@
   <title>{{ email_title }}</title>
 ​
   <style type="text/css">
-    /*@font-face {
-    font-family: 'akzidenz-grotesk';
-    font-style: normal;
-    font-weight: normal;
-    src:
-      local('Berthold Akzidenz Grotesk BE Regular'),
-      url('https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFVZ0bf8pkAg.woff2') format('woff');
-    }*/
     table,
     td {
       color: #000000;
@@ -319,32 +286,51 @@
       color: #000000;
       text-decoration: underline;
     }
+
     /* override blue underline in phone emails */
-    a [x-apple-data-detectors] {
-    color: inherit !important;
-    text-decoration: none !important;
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    }
-    .email-link [x-apple-data-detectors] {
-    color: inherit !important;
-    text-decoration: none !important;
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    }
+      .override-blue-underlines { 
+        color:inherit !important; 
+        text-decoration: none !important; 
+}
+      a [x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+      .email-link [x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+      u + #body a {/* Gmail */
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+      #MessageViewBody a { /* SAMSUNG Mail */
+        color: #77d6fc !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
     #btn {
       max-width: 280px;
       background-color: black; 
-      font-size: 18px; 
-      /*font-family: 'akzidenz-grotesk', Arial, sans-serif;*/ 
+      font-size: 18px;
       font-weight: bold; 
       text-decoration: none; 
       padding: 14px 50px;
-      /*margin-bottom: 30px; */
       color: white; 
       border-radius: 30px; 
       display: inline-block; 
@@ -526,22 +512,7 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
 </head>
 ​
-<body class="clean-body">
-
- {% comment %} <div style="width: 90%; margin: 0 auto; border: 1px solid red; word-wrap: break-word; padding: .8rem;">
-    order status url: {{order_status_url}}<br/>
-    {% for  line in line_items %}<br/>
-      <span>line product type: {{line.product.type}}</span><br/>
-      <span> line_title (line or product) next line -> </span><br/>
-      <span> line.title: {{line.title}} </span><br/>
-      <span> product.title: {{line.product.title}} </span><br/>
-      <span> line variant.title: {{line.variant.title}} </span><br/>
-      <hr/>
-      {% for  prop in line.properties %}
-        <span>line.properties: {{prop.first}}: {{prop.last}}</span><br/>
-      {% endfor %}
-    {% endfor %}
-  </div> {% endcomment %}
+<body id="body" class="clean-body">
 
   <table class="u-row" cellpadding="0" cellspacing="0">
     <tbody>
@@ -608,13 +579,7 @@
                 <strong><span class="order-list__item-title">
                   {{ line_title }} × {{ line_display }}
                 </span></strong><br />
-                <span>fitsAccs_key: fitsAccs_value</span>
-                {% comment %} 
-                ++++++++++Check if variant title is necessary!!!!!!!!!!!!!!
-                {% if line.variant.title != 'Default Title' %}
-                  <span class="order-list__item-variant">variant title: {{ line.variant.title }}</span>
-                {% endif %} {% endcomment %}
-
+                {% comment %} <span>fitsAccs_key: fitsAccs_value</span> {% endcomment %}
               {% endcapture %}
 
               {% capture line_info1_procsx %}
@@ -626,9 +591,8 @@
                 <strong>
                   <span class="order-list__item-title"> {{ line_title }}</span><br />
                 </strong>
-                  <span>info1_key: info1_value</span><br/>
+                  {% comment %} <span>info1_key: info1_value</span><br/> {% endcomment %}
                 {% for prop in line.properties reversed %}
-                  {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
                   {% unless prop.last == blank %}
                     {% if prop.first contains '_' %}
                       {% assign prop_key = prop.first | split: '_' | last | capitalize %}
@@ -664,9 +628,8 @@
               {% endcapture %}
               
               {% capture line_info2_procsx %}
-                <span>info2_key: info2_value</span><br/>
+                {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
                 {% for prop in line.properties reversed %}
-                    {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
                     {% unless prop.last == blank %}
                       {% if prop.first contains '_' %}
                         {% assign prop_key = prop.first | split: '_' | last | capitalize %}
@@ -740,7 +703,7 @@
                 <tr>
                   <td width="20%"></td>
                   <td width="40%"></td>
-                  <td width="40%" align="right">
+                  <td width="40%" align="right" style="padding-bottom: 15px;">
                     {{ line_price }}
                   </td>
                 </tr>
@@ -834,15 +797,15 @@
                       <tr>
                         <td class="" align="left">
                           <p style="margin-bottom: 15px;">
-                            {{ shipping_address.name }}<br />
-                            {{ shipping_address.address1 }}<br />
+                            <span class="override-blue-underlines">{{ shipping_address.name }}</span><br />
+                            <span class="override-blue-underlines">{{ shipping_address.address1 }}</span><br />
                             {% if shipping_address.address2 != blank %} 
-                              {{ shipping_address.address2 }}<br />
+                              <span class="override-blue-underlines">{{ shipping_address.address2 }}</span><br />
                             {% endif %} 
-                            {{ shipping_address.city }}, 
-                            {{ shipping_address.province_code }}
-                            {{ shipping_address.zip }}<br />
-                            {{ shipping_address.country }}
+                            <span class="override-blue-underlines">{{ shipping_address.city }}</span>, 
+                            <span class="override-blue-underlines">{{ shipping_address.province_code }}</span>
+                            <span class="override-blue-underlines">{{ shipping_address.zip }}</span><br />
+                            <span class="override-blue-underlines">{{ shipping_address.country }}</span>
                           </p>
                         </td>
                       </tr>
@@ -866,16 +829,16 @@
                             Same as shipping address.
                           </p>
                           {% else %}
-                            <p style="margin-bottom: 15px;">
-                              {{ billing_address.name }}<br />
-                              {{ billing_address.address1 }}<br />
+                            <p class="override-blue-links" style="margin-bottom: 15px;">
+                              <span class="override-blue-underlines">{{ billing_address.name }}</span><br />
+                              <span class="override-blue-underlines">{{ billing_address.address1 }}</span><br />
                               {% if billing_address.address2 != blank %} 
-                                {{billing_address.address2 }}<br />
+                                <span class="override-blue-underlines">{{billing_address.address2 }}</span><br />
                               {% endif %} 
-                              {{ billing_address.city }}, 
-                              {{ billing_address.province_code }} 
-                              {{ billing_address.zip }}<br />
-                              {{ billing_address.country }}
+                              <span class="override-blue-underlines">{{ billing_address.city }}</span>, 
+                              <span class="override-blue-underlines">{{ billing_address.province_code }}</span> 
+                              <span class="override-blue-underlines">{{ billing_address.zip }}</span><br />
+                              <span class="override-blue-underlines">{{ billing_address.country }}</span>
                             </p>
                           {% endif %}
                         </td>

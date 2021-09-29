@@ -31,14 +31,16 @@
 ////// HEADER ////////
 {% endcomment %}
 {% capture header %}
-  {% if isPro %}
-    Create. Perform. Stream.
-  {% elsif isMonitor %}
-    You’re One Step Closer to Your CSX Earphones
+  {% if isPro or isMonitor %}
+    Unparalleled Sound<br/>
+      Is On The Way
+  {% elsif isFitKit %}
+    You’re One Step Closer to<br/> 
+    Your CSX Earphones
   {% elsif isFits %}
     Get Excited!
   {% elsif isAccsOnly %}
-    We’re Working<br/> On Your Order
+    Your Order is On Its Way
   {% endif %}
 {% endcapture %}
 {% comment %}
@@ -52,6 +54,10 @@
         alt="" title="" width="464" />
     {% elsif isMonitor %}
       <img align="center" border="0"
+        src="{{ 'csx-shipped.png' | file_url }}"
+        alt="" title="" width="464" />
+    {% elsif isFitKit %}
+      <img align="center" border="0"
         src="{{ 'csx-fitkit-shipped.png' | file_url }}"
         alt="" title="" width="464" />
     {% elsif isFits %}
@@ -62,90 +68,74 @@
   </div>
 {% endcapture %}
 {% comment %}
-//// CONFIRMATION MESSAGE /////
+//// ORDER TRACKING /////
 {% endcomment %}
-{% capture confirmation_message %}
-  <div style="padding: 0 30px;">
-    {% if isPro %}
-    <p>
-      <strong>Hi {{ customer.first_name }},</strong><br/><br/>
-      Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you your custom IEMs. 
-      Before we can customize your PRO in-ear monitors, we need your impressions.
-    </p>
-    <p>
-      <strong>If you’re sending us physical molds, please share 
-      <a href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-">these instructions</a>
-      with your audiologist</strong> to ensure they capture all of the information needed to craft your IEMs. 
-      Your impressions should look similar to the sample impression in terms of canal size, detail and base
-      width. Failing to capture all of the information we need may result in your impressions being unusable. 
-    </p>
-    <p>
-      Once you have your physical impressions, please ship them to:<br/><br/> 
-      <strong>
-      Ultimate Ears Pro {{ order_number }}<br/>
-      3 Jenner Street<br/>
-      Suite 180<br/>
-      Irvine, CA 92618<br/>
-      (800) 589-6531<br/>
-      </strong>
-    </p>
-    <div>
-      <a id="btn" href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-" style="margin-bottom: 30px;">
-        <!--[if mso]>
-        <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
-          <![endif]-->
-        <span style="mso-text-raise: 15pt;" ><strong>Audiologist Instructions</strong></span>
-        <!--[if mso]>
-          <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
-        <![endif]-->
-      </a>
-    </div>
-    <p>
-      <strong>If you’re an existing customer or if we have your 3D scans on file</strong>, we’ll start working 
-      on your in-ear monitors right away. You can expect an update from us shortly with an 
-      anticipated completion date. 
-    </p>
-  </div>
-  <div style="border-top: 1px solid #DBDBDB; margin: 30px 0 50px;">
-    <h2>Your Order Details</h2>
-  </div>
-  {% elsif isFitKit %}
-      <p>
-        <strong>Hi {{ customer.first_name }},</strong><br/><br/>
-
-        Your FitKit for order <strong>{{ order_number }}</strong> is officially on its way. You can follow 
-        its progress via tracking <strong>&nbsp;<a href="{{order_status_url}}">number</strong></a>.
-      </p>
-    {% elsif isFits %}
-      <p>
-        Hey {{ customer.first_name }}, order <strong>{{ order_number }}</strong> has shipped! Follow its journey 
-        at <strong>&nbsp;<a href="{{order_status_url}}">here</strong></a>. 
-      </p>
-    {% elsif isAccsOnly %}
-      <p>
-        <strong>Hi {{ customer.first_name }},</strong><br/><br/>
-
-        Your Ultimate Ears Order [order#] is confirmed! We’ll be in touch with tracking 
-        information as soon as your order is ready to ship. 
-
-      </p>
+{% if fulfillment.tracking_numbers.size > 0 %}
+  {% capture order_tracking_url %}
+    {% if fulfillment.tracking_url %}
+      {{ fulfillment.tracking_url }}
     {% endif %}
-  
-  
-{% endcapture %}
+  {% endcapture %}
+
+  {% capture order_tracking_number %}
+    {% if fulfillment.tracking_numbers.size == 1 %}
+    {{ fulfillment.tracking_numbers.first }}
+    {% endif %}
+  {% endcapture %}
+{% endif %}
 {% comment %}
 ////  ORDER TRACKING Button /////
 {% endcomment %}
-{% capture order_tracking %}
-  <a id="btn" href="{{order_status_url}}">
+{% capture order_tracking_button %}
+  <a id="btn" href="{{ order_tracking_url }}">
     <!--[if mso]>
     <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
       <![endif]-->
-    <span style="mso-text-raise: 15pt;"><strong>Track Order</strong></span>
+    {% if isFitKit %}
+      <span style="mso-text-raise: 15pt;"><strong>Track FitKit</strong></span>
+    {% elsif isFits %}
+      <span style="mso-text-raise: 15pt;"><strong>Track Order</strong></span>
+    {% else %}
+      <span style="mso-text-raise: 15pt;"><strong>Track Shipment</strong></span>
+    {% endif %}
     <!--[if mso]>
       <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
     <![endif]-->
   </a>
+{% endcapture %}
+{% comment %}
+//// CONFIRMATION MESSAGE /////
+{% endcomment %}
+{% capture confirmation_message %}
+  <div style="padding: 0 30px;">
+  {% if isPro or isMonitor %}
+    <p>
+      <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+
+      Your premium listening experience is on its way! Follow its journey at 
+      <strong>{{order_tracking_number}}</strong>. 
+      Please note the package will require a signature upon delivery.
+    </p>
+  {% elsif isFitKit %}
+      <p>
+        <strong>Hi {{ customer.first_name }},</strong><br/><br/>
+        Your FitKit for order <strong>{{ order_number }}</strong> is officially on its way. You can follow 
+        its progress via tracking number<strong>{{order_tracking_number}}</strong>.
+      </p>
+  {% elsif isFits %}
+    <p>
+      Hey {{ customer.first_name }}, order <strong>{{ order_number }}</strong> has shipped! Follow its journey 
+      at <strong>{{order_tracking_number}}</strong>. 
+    </p>
+  {% elsif isAccsOnly %}
+    <p>
+      Hi {{ customer.first_name }}, <br/>
+    </p>
+    <p>
+      Your Ultimate Ears order <strong>{{ order_number }}</strong> is on its way to you! Follow its journey 
+      at <strong>{{order_tracking_number}}</strong>.
+    </p>
+  {% endif %}
 {% endcapture %}
 {% comment %}
 ////  CONTACT US MESSAGE /////
@@ -165,6 +155,23 @@
       Our team of experts are here to help and guide you every step of the way. 
       If you need anything or have questions, contact the UE team via our live chat, 
       email, or phone.
+    </p>
+  {% endif %}
+{% endcapture %}
+{% comment %}
+////  FitKit Info MESSAGE /////
+{% endcomment %}
+{% capture fitkit_info_message %}
+  {% if isFitKit %}
+    <h2>Get Ready!</h2>
+    <p>
+      While you wait for your FitKit to arrive, please read through our <a href="https://fitkit.zendesk.com/hc/en-us/articles/360035352592-FitKit-Guide" >FitKit guide</a> so you’ll 
+      know exactly what to expect during the fitting process. It has some handy tips so making your 
+      impressions will be a breeze. 
+    </p>
+    <p>
+      As soon as we receive your FitKit our team of Fit Experts will make sure your tips are good to 
+      go and we’ll send you another email to let you know your earphones’ anticipated completion date. 
     </p>
   {% endif %}
 {% endcapture %}
@@ -217,13 +224,13 @@
 //// SOCIAL ICONS /////
 {% endcomment %}
 {% capture social %}
-    <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-fb.png' | file_url}}"/></a>
-    <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'icon-insta.png' | file_url}}"/></a>
-    <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-twitter.png' | file_url}}"/></a>
+    <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'email-icon-fb.png' | file_url}}"/></a>
+    <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'email-icon-in.png' | file_url}}"/></a>
+    <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'email-icon-tw.png' | file_url}}"/></a>
     {% if isPro or isMonitor %}
-      <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
+      <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
     {% elsif isFits %}
-      <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
+      <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
     {% endif %}
 {% endcapture %}
 
@@ -247,59 +254,7 @@
   <title>{{ email_title }}</title>
 ​
   <style type="text/css">
-    /*@font-face {
-    font-family: 'akzidenz-grotesk';
-    font-style: normal;
-    font-weight: normal;
-    src:
-      local('Berthold Akzidenz Grotesk BE Regular'),
-      url('https://fonts.gstatic.com/s/opensans/v15/mem8YaGs126MiZpBA-UFVZ0bf8pkAg.woff2') format('woff');
-    }*/
-    table,
-    td {
-      color: #000000;
-    }
-​
-    a {
-      color: #000000;
-      text-decoration: underline;
-    }
-    /* override blue underline in phone emails */
-    a [x-apple-data-detectors] {
-    color: inherit !important;
-    text-decoration: none !important;
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    }
-    .email-link [x-apple-data-detectors] {
-    color: inherit !important;
-    text-decoration: none !important;
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    }
-    #btn {
-      max-width: 280px;
-      background-color: black; 
-      font-size: 18px; 
-      /*font-family: 'akzidenz-grotesk', Arial, sans-serif;*/ 
-      font-weight: bold; 
-      text-decoration: none; 
-      padding: 14px 50px;
-      /*margin-bottom: 30px; */
-      color: white; 
-      border-radius: 30px; 
-      display: inline-block; 
-      mso-padding-alt: 0;
-    }
-
-    hr {
-      border-top: 1px solid #FAF9F7;
-      margin-bottom: 30px;
-    }
+    
     .social__row {
       padding: 15px;
       text-align: center;
@@ -390,7 +345,6 @@
       .u-row .u-col {
         min-width: 320px !important;
         max-width: 100% !important;
-        /* display: block !important; */
       }
 ​
       .u-row {
@@ -416,14 +370,63 @@
     }
 ​
     table,
+    td {
+      color: #000000;
+    }
+    table,
     tr,
     td {
       vertical-align: top;
       border-collapse: collapse;
     }
+
+    a {
+      color: #000000;
+      text-decoration: underline;
+    }
+    /* override blue underline in phone emails */
+    a [x-apple-data-detectors] {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    }
+    .email-link [x-apple-data-detectors] {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    }
+    #btn {
+      max-width: 280px;
+      background-color: black; 
+      font-size: 18px; 
+      /*font-family: 'akzidenz-grotesk', Arial, sans-serif;*/ 
+      font-weight: bold; 
+      text-decoration: none; 
+      padding: 14px 50px;
+      /*margin-bottom: 30px; */
+      color: white; 
+      border-radius: 30px; 
+      display: inline-block; 
+      mso-padding-alt: 0;
+    }
+
+    hr {
+      border-top: 1px solid #FAF9F7;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
 ​
     p {
-      margin: 0 0 30px;
+      margin: 0 0 20px;
       line-height: 125%;
     }
     p small {
@@ -478,6 +481,11 @@
       {% if line.line_item.image %}
             <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
       {% endif %}
+      {% if line.line_item.product.type %}	
+            {% assign line_type = line.line_item.product.type %}	
+          {% else %}
+          <span>{{line_type}}</span><br/>
+      {% endif %}
     {% endfor %}
   </div>
 
@@ -517,49 +525,13 @@
         </td>
       </tr>
 
-      <tr {% unless isFits %} style="display: none;" {% endunless %}>
+      <tr>
         <td>
           <div align="center" style="margin-bottom: 40px;">
-            {{ order_tracking }}
+            {{ order_tracking_button }}
           </div>
         </td>
       </tr>
-
-      {% comment %} <tr>
-        <td>
-          <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
-            <tr>
-              <td width="20%" valign="top">
-                <h1>Cell1</h1>
-                {% for line in line.items %}
-                  {% capture line_image %}
-                {% if line.properties and line.properties._image %}
-                  <img src="{{ line.properties._image}}" align="left" class="order-list__product-image" />
-                {% elsif line.image %}
-                  <img src="{{ line | img_url: 'compact_cropped' }}" align="left" width="100" height="auto"
-                    class="order-list__product-image" />
-                {% endif %}
-              {% endcapture %}
-              {{line_image}}
-                {% endfor %}
-              </td>
-              <td width="33%" valign="top">
-                <h1>Cell2</h1>
-              </td>
-              <td width="40%" valign="top">
-                <h1>Cell3</h1>
-              </td
-            </tr>
-            <tr>
-              <td width="20%"></td>
-              <td width="40%"></td>
-              <td width="40%" align="right">
-                <h1>Cell4</h1>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr> {% endcomment %}
 
       <tr>
         <td>
@@ -567,7 +539,7 @@
             {% for line in fulfillment.fulfillment_line_items %}
               {% capture line_image %}
                 {% if line.line_item.image %}
-                  <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="100" class="order-list__product-image"/>
+                  <img src="{{ line.line_item | img_url: 'compact_cropped' }}" width="100" class="order-list__product-image"/>
                 {% endif %}
               {% endcapture %}
 
@@ -589,21 +561,23 @@
                 </span></strong><br />
                 {% comment %} <span>fitsAccs_key: fitsAccs_value</span> {% endcomment %}
                 
-                {% if line.variant.title != 'Default Title' %}
-                  <span class="order-list__item-variant">{{ line.variant.title }}</span>
+                {% if lline.line_item.variant.title != 'Default Title' %}
+                  <span class="order-list__item-variant">{{ lline.line_item.variant.title }}</span>
                 {% endif %}
               {% endcapture %}
 
               {% capture line_info1_procsx %}
-                {% if line.product.title %}
-                  {% assign line_title = line.product.title %} 
+                {% if line.line_item.product.title %}
+                  {% assign line_title = line.line_item.product.title %} 
                   {% else %} 
-                  {% assign line_title = line.title %} 
+                  {% assign line_title = line.line_item.title %} 
                 {% endif %}
                 <strong>
                   <span class="order-list__item-title"> {{ line_title }}</span><br />
                 </strong>
+                {% if isPro or isMonitor %}
                   {% comment %} <span>info1_key: info1_value</span><br/> {% endcomment %}
+                {% endif %}
                 {% for prop in line.properties reversed %}
                   {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
                   {% unless prop.last == blank %}
@@ -641,7 +615,9 @@
               {% endcapture %}
               
               {% capture line_info2_procsx %}
-                {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
+                {% if isPro or isMonitor %}
+                  {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
+                {% endif %}
                 {% for prop in line.properties reversed %}
                     {% comment %} <span style="color: red;">{{prop.first}}: {{prop.last}} <br/> </span> {% endcomment %}
                     {% unless prop.last == blank %}
@@ -682,14 +658,41 @@
                 {% endif %}
                   <strong><span class="order-list__item-price">{{ line.line_price | money }}</span></strong>
               {% endcapture %}
-              {% comment %} ///// isFits LINE ITEMS {% endcomment %}
-              <table width="100%" {% if isFits %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none; border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% endif %}>
+              {% comment %} ///// IsPro and isMonitor LINE ITEMS {% endcomment %}
+              <table width="100%" {% if isPro or isMonitor %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none;" {% endif %} > 
                 <tr>
-                  <td width="35%" valign="top">
+                  <td width="20%" valign="top">
+                    {{ line_image }}
+                  </td>
+                  <td width="33%" valign="top">
+                    {{ line_info1_procsx}}
+                  </td>
+                  <td width="40%" valign="top">
+                    {{ line_info2_procsx }}
+                  </td
+                </tr>
+              </table>
+              {% comment %} ///// isFits LINE ITEMS {% endcomment %}
+              <table width="100%" {% if isFits %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none;" {% endif %}>
+                <tr>
+                  <td width="20%" valign="top">
                     
                   </td>
-                  <td width="65%" valign="middle">
+                  <td width="80%" valign="middle" style="padding-bottom: 20px;">
                     {{ line_image }}
+                    {{ line_info_fitsaccs }}
+                  </td>
+                </tr>
+              </table>
+              {% comment %} ///// isAccsOnly LINE ITEMS {% endcomment %}
+              <table width="100%" {% if isAccsOnly %} style="margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none;" {% endif %}>
+                <tr>
+                  <td width="100%" align="center" valign="middle">
+                    {{ line_image }}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="100%" align="center" valign="middle">
                     {{ line_info_fitsaccs }}
                   </td>
                 </tr>
@@ -704,107 +707,35 @@
                   <td width="33%" valign="middle">
                     {{ line_info_fitsaccs }}
                   </td>
-                  <td width="40%" valign="top">
-                    {{ line_info2_procsx }}
+                  <td width="40%" align="right" valign="middle">
+                    <strong><span class="order-list__item-price">$0.00</span></strong>
                   </td
-                </tr>
-                <tr>
-                  <td width="20%"></td>
-                  <td width="40%"></td>
-                  <td width="40%" align="right">
-                    {{ line_price }}
-                  </td>
                 </tr>
               </table>
             {% endfor %}  
           {% comment %} ////// Line Items END //// {% endcomment %}
         </td>
       </tr>
-      
-      {% comment %} <tr>
-        <td>
-          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 14px;">
-            <tbody>
-              <tr>
-                {% if discount != blank %}
-                  <td width="60%"></td>
-                  <td class="" align="left">
-                    <p>Discount</p>
-                  </td>
-                  <td class="" align="right">
-                    <strong>{{ discount_amount }}</strong>
-                  </td>
-                {% endif %}
-              </tr>
-              <tr>
-                <td width="60%"></td>
-                <td class="" align="left">
-                  <p>Subtotal</p>
-                </td>
-                <td class="" align="right">
-                  <strong>{{ subtotal_price | money }}</strong>
-                </td>
-              </tr>
-              <tr>
-                <td width="60%"></td>
-                <td class="" align="left">
-                  <p>Shipping</p>
-                </td>
-                <td class="" align="right">
-                  <strong>{{ shipping_price | money }}</strong>
-                </td>
-              </tr>
-              {% for line in tax_lines %}
-                <tr>
-                  <td width="60%"></td>
-                  <td class="" align="left">
-                    <p>
-                      {{ line.title }}
-                      {% for p in line.properties %}
-                        {% unless p.last == blank %}
-                         - {{ p.first }}: {{ p.last }}
-                        {% endunless %}
-                      {% endfor %}
-                    </p>
-                  </td>
-                  <td class="" align="right">
-                    <strong>{{ line.price | money }}</strong>
-                  </td>
-                </tr>
-              {% endfor %}
-
-              <tr>
-                <td width="60%"></td>
-                <td class="" align="left">
-                  <p>Total</p>
-                </td>
-                <td class="" align="right">
-                  <strong>{{ total_price | money_with_currency }}</strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr> {% endcomment %}
 
       <tr>
         <td>
           <table class="offwhite" width="100%" style="font-size: 14px;">
             <tbody>
-              <tr {% if isFits %} style="padding: 0 10%; padding-top: 15px;" {% else %} style="display: none;" {% endif %}>
-                <td width="35%"></td>
+            {% comment %} ///////// All (EXCEPT FitKit) SHIPPING/BILLING {% endcomment %}
+              <tr {% if isFitKit == false %} style="padding: 15px 10%;" {% else %} style="display: none;" {% endif %}>
+                <td width="30%"></td>
                 <td class="py-15" width="40%" style="">
                   <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                     <tbody width="100%">
                       <tr>
-                        <td class="" align="left">
+                        <td class="" align="center">
                           <p style="margin-bottom: 15px;">
                             <strong>Shipping Address</strong>
                           </p>
                         </td>
                       </tr>
                       <tr>
-                        <td class="" align="left"
+                        <td class="" align="center"
                           <p style="margin-bottom: 15px;">
                             {{ shipping_address.name }}<br />
                             {{ shipping_address.address1 }}<br />
@@ -821,9 +752,10 @@
                     </tbody>
                   </table>
                 </td>
-                <td width="25%"></td>
+                <td width="30%"></td>
               </tr>
-              <tr {% if isFitKit %} style="padding: 0 10%; padding-top: 15px;" {% elsif isFits %} style="display: none;" {% endif %}>
+              {% comment %} /////////// FitKit SHIPPING/BILLING {% endcomment %}
+              <tr {% if isFitKit %} style="padding: 0 10%; padding-top: 15px;" {% else %} style="display: none;" {% endif %}>
                 <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
                   <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                     <tbody width="30%">
@@ -852,7 +784,7 @@
                     </tbody>
                   </table>
                 </td>
-                <td width="40%">
+                <td width="40%" style="padding: 0 10%; padding-top: 15px;" >
                   <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                     <tbody>
                       <tr>
@@ -895,11 +827,96 @@
       <tr>
         <td>
           <div class="p-30-all-around" align="center">
-            {{ order_tracking }}
+            {{ order_tracking_button }}
           </div>
         </td>
       </tr>
 
+      <tr {% unless isFitKit %} style="display: none;"{% endunless %} >
+        <td>
+          <div class="p-15-all-around" align="center">
+            {{ fitkit_info_message }}
+          </div>
+        </td>
+      </tr>
+      {% comment %} ///// isFitKit Instructions {% endcomment %}
+      <tr {% if isFitKit %} style="padding-bottom: 30px;" {% else %} style="display: none;" {% endif %}>
+        <td>
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 16px; margin-bottom: 30px;">
+            <tr>
+              <td width="50%" align="left" valign="middle">
+                <img src="{{'fk-placeholder.png' | file_url}}" style="width: 90%"/>
+
+              </td>
+              <td width="50%" align="don't" valign="middle">
+                <table>
+                  <tr>
+                    <tr>
+                      <td>
+                      <h2 style="margin-bottom: 0;">1</h2>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="100%">
+                        <span>
+                          Download the UE FitKit app for iOS or Android
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="40%" align="left">
+                        <a href="https://apps.apple.com/us/app/ue-fitkit/id1383753317">
+                          <img src="{{'apple-appstore-emails.png' | file_url}}" style="width: 48%; margin-left: -8px;"/>
+                        </a>
+                        <a href="https://play.google.com/store/apps/details?id=com.revols.uefitkit&hl=en_US&gl=US">
+                          <img src="{{'google-play-emails.png' | file_url}}" style="width: 48%; margin-bottom: 3px;"/>
+                        </a>
+                      </td>
+                    </tr>
+                  </tr>
+                  <tr>
+                    <tr>
+                      <td>
+                        <h2 style="margin-bottom: 0;">2</h2>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="100%">
+                        <span>
+                          Follow the step-by-step instructions in the app
+                        </span>
+                      </td>
+                    </tr>
+                  </tr>
+                  <tr>
+                    <tr>
+                      <td>
+                        <h2 style="margin-bottom: 0;">3</h2>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span>
+                          When you’re done, pack up your tips and send your fitkit back to 
+                          us using the included prepaid shipping label
+                        </span>
+                      </td>
+                    </tr>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div {% unless isFitKit %} style="display: none;" {% endunless %}  align="center">
+            <p style="margin-bottom: 15px;"><strong>Check Out Our FitKit Guide To Learn More</strong></p>
+            <img src="https://d3k81ch9hvuctc.cloudfront.net/company/HskQ5V/images/840dbd69-a2d0-4ebf-8bdb-9bdaf1bfa31b.gif" style="display: block; width: 100%; margin-bottom: 20px;"/>
+          </div>
+        </td>
+      </tr>
       <tr>
         <td>
           <div class="p-15-all-around" align="center">
@@ -918,15 +935,12 @@
           </table>
         </td>
       </tr>
-
-      <tr>
         <td>
-          <div class="p-30-all-around" align="center" style="margin: 28px 0 26px">
+          <div class="" align="center" style="margin: 28px 0 26px">
            {{ social }}
           </div>
         </td>
       </tr>
-
       <tr>
         <td>
           <div class="px-30" align="center">

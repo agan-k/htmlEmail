@@ -4,69 +4,94 @@
 {% assign isPro = false %}
 {% assign isMonitor = false %}
 {% assign isFitKit = false %}
-{% assign isFits = true %}
+{% assign isFits = false %}
 {% assign isAccsOnly = false %}
-{% comment %} {% for line in line_items %}
-  {% if line.product.type == "pro" or line.product.type == "Pro-Hidden" %}
+{% for line in fulfillment.fulfillment_line_items %}
+  {% if line.line_item.product.type == "pro" or line.line_item.product.type == "Pro-Hidden" %}
     {% assign isPro = true %}
     {% assign isMonitor = false %}
     {% assign isFits = false %}
     {% assign isAccsOnly = false %}
-  {% elsif line.product.type == "Monitor" or line.product.type == "Monitor-Hidden" %}
+  {% elsif line.line_item.product.type == "Monitor" or line.line_item.product.type == "Monitor-Hidden" %}
    {% assign isMonitor = true %}
+   {% assign isFitKit = false %}
     {% assign isFits = false %}
     {% assign isAccsOnly = false %}
-  {% elsif line.product.type == "UE Fits" %}
+  {% elsif line.line_item.product.type == "Fitkit" %}
+   {% assign isFitKit = true %}
+   {% assign isPro = false %}
+   {% assign isMonitor = false %}
+    {% assign isFits = false %}
+    {% assign isAccsOnly = false %}
+  {% elsif line.line_item.product.type == "UE Fits" %}
    {% assign isFits = true %}
     {% assign isAccsOnly = false %}
-  {% elsif line.product.type == "Accessories" %}
+  {% elsif line.line_item.product.type == "Accessories" %}
    {% assign isAccsOnly = true %}
   {% endif %}
-{% endfor %} {% endcomment %}
+{% endfor %} 
 {% comment %} 
 ////// EMAIL TITLE /////
 {% endcomment %}
-{% capture email_title %}Thank you for your order! {% endcapture %}
+{% capture email_title %}Thank you for your order!{% endcapture %}
+{% comment %} 
+////// test items //////
+{% endcomment %}
+{% comment %} {% capture test_items %}
+  <span>test-></span>
+  <div style="width: 90%; min-height: 300px; margin: 0 auto; border: 1px solid red; word-wrap: break-word; padding: .8rem;">
+
+    {% for line in fulfillment.fulfillment_line_items %}
+      {{ line.line_item.product | json }}
+      {% if line.line_item.image %}
+            <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
+      {% endif %}
+      {% if line.line_item.product.type %}	
+            {% assign line_type = line.line_item.product.type %}	
+          {% else %}
+          <span>{{line_type}}</span><br/>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endcapture %} {% endcomment %}
 {% comment %}
 ////// HEADER ////////
 {% endcomment %}
-{% capture header %}
-  {% if isPro or isMonitor %}
-    Unparalleled Sound<br/>
-      Is On The Way
-  {% elsif isFitKit %}
-    You’re One Step Closer to<br/> 
-    Your CSX Earphones
-  {% elsif isFits %}
+{%- capture header -%}
+  {%- if isPro or isMonitor -%}
+    Unparalleled Sound Is On The Way
+  {%- elsif isFitKit -%}
+    You’re One Step Closer to Your CSX Earphones
+  {%- elsif isFits -%}
     Get Excited!
-  {% elsif isAccsOnly %}
+  {%- elsif isAccsOnly -%}
     Your Order is On Its Way
-  {% endif %}
-{% endcapture %}
+  {%- endif -%}
+{%- endcapture -%}
 {% comment %}
 ////// ORDER PROGRESS BAR ////////
 {% endcomment %}
-{% capture order_progress_bar %}
+{%- capture order_progress_bar -%}
   <div style="margin-bottom: 25px;">
     {% if isPro %}
       <img align="center" border="0"
         src="{{ 'pro-shipped.png' | file_url }}"
-        alt="" title="" width="464" />
+        alt="" title="" width="500" />
     {% elsif isMonitor %}
       <img align="center" border="0"
         src="{{ 'csx-shipped.png' | file_url }}"
-        alt="" title="" width="464" />
+        alt="" title="" width="500" />
     {% elsif isFitKit %}
       <img align="center" border="0"
         src="{{ 'csx-fitkit-shipped.png' | file_url }}"
-        alt="" title="" width="464" />
+        alt="" title="" width="500" />
     {% elsif isFits %}
       <img align="center" border="0"
         src="{{ 'fits-shipped.png' | file_url }}"
-        alt="" title="" width="464" />
+        alt="" title="" width="500" />
     {% endif %}
   </div>
-{% endcapture %}
+{%- endcapture -%}
 {% comment %}
 //// ORDER TRACKING /////
 {% endcomment %}
@@ -183,11 +208,11 @@
     <h3 style="text-transform: uppercase; margin: 0;">EMAIL</h3>
     {% if isFits %}
       <p>
-        <strong><span class="email-link">us at fits@ultimateears.com</span></strong>
+        <strong><span><a href="mailto:fits@ultimateears.com" style="color:inherit !important; text-decoration: none !important;">us at fits@ultimateears.com</a></span></strong>
       </p>
       {% else %}
       <p>
-        <strong><span class="email-link">us at customs@ultimateears.com</span></strong>
+        <strong><span><a href="mailto:customs@ultimateears.com" style="color:inherit !important; text-decoration: none !important;">us at customs@ultimateears.com</a></span></strong>
       </p>
     {% endif %}
 
@@ -195,7 +220,7 @@
     <p>
       <strong><span>with a real person on our website</span></strong>
     </p>
-    {% if isFits%}
+    {% if isFits %}
       <a id="btn" href="https://custom.ultimateears.com/pages/contact">
         <!--[if mso]>
         <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
@@ -233,16 +258,13 @@
       <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
     {% endif %}
 {% endcapture %}
-
 {% capture copyright %}
   <p>
     <small>
       &copy; 2021 Ultimate Ears. All Rights Reserved.<br/>
-      Want to change how you receive these emails? Update your email preferences or unsubscribe from the list.
     </small>
   </p>
 {% endcapture %}
-​
 <!DOCTYPE html>
 <html lang="en">
 ​
@@ -365,7 +387,7 @@
       max-width: 600px;
       margin: 0 auto;
       padding: 0;
-      font-family: 'akzidenz-grotesk', Arial, sans-serif;
+      font-family: 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;
       font-size: 18px;
     }
 ​
@@ -385,27 +407,45 @@
       text-decoration: underline;
     }
     /* override blue underline in phone emails */
-    a [x-apple-data-detectors] {
-    color: inherit !important;
-    text-decoration: none !important;
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    }
-    .email-link [x-apple-data-detectors] {
-    color: inherit !important;
-    text-decoration: none !important;
-    font-size: inherit !important;
-    font-family: inherit !important;
-    font-weight: inherit !important;
-    line-height: inherit !important;
-    }
+      .override-blue-underlines { 
+        color:inherit !important; 
+        text-decoration: none !important; 
+}
+      a [x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+      .email-link [x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+      u + #body a {/* Gmail */
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+      #MessageViewBody a { /* SAMSUNG Mail */
+        color: #77d6fc !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
     #btn {
       max-width: 280px;
       background-color: black; 
       font-size: 18px; 
-      /*font-family: 'akzidenz-grotesk', Arial, sans-serif;*/ 
       font-weight: bold; 
       text-decoration: none; 
       padding: 14px 50px;
@@ -419,6 +459,10 @@
     hr {
       border-top: 1px solid #FAF9F7;
       margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 46px;
     }
 
     h2 {
@@ -470,24 +514,10 @@
       vertical-align: middle;
     }
   </style>
-​
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-</head>
-​
+​</head>
 <body class="clean-body">
 
- <div style="width: 90%; min-height: 300px; margin: 0 auto; border: 1px solid red; word-wrap: break-word; padding: .8rem;">
-    {% for line in fulfillment.fulfillment_line_items %}
-      {% if line.line_item.image %}
-            <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
-      {% endif %}
-      {% if line.line_item.product.type %}	
-            {% assign line_type = line.line_item.product.type %}	
-          {% else %}
-          <span>{{line_type}}</span><br/>
-      {% endif %}
-    {% endfor %}
-  </div>
+{% comment %} {{test_items}} {% endcomment %}
 
   <table class="u-row" cellpadding="0" cellspacing="0">
     <tbody>
@@ -536,7 +566,8 @@
       <tr>
         <td>
           {% comment %} ////// LINE ITEMS //// {% endcomment %}
-            {% for line in fulfillment.fulfillment_line_items %}
+          {% for line in fulfillment.fulfillment_line_items %}
+          
               {% capture line_image %}
                 {% if line.line_item.image %}
                   <img src="{{ line.line_item | img_url: 'compact_cropped' }}" width="100" class="order-list__product-image"/>
@@ -659,60 +690,68 @@
                   <strong><span class="order-list__item-price">{{ line.line_price | money }}</span></strong>
               {% endcapture %}
               {% comment %} ///// IsPro and isMonitor LINE ITEMS {% endcomment %}
-              <table width="100%" {% if isPro or isMonitor %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none;" {% endif %} > 
-                <tr>
-                  <td width="20%" valign="top">
-                    {{ line_image }}
-                  </td>
-                  <td width="33%" valign="top">
-                    {{ line_info1_procsx}}
-                  </td>
-                  <td width="40%" valign="top">
-                    {{ line_info2_procsx }}
-                  </td
-                </tr>
-              </table>
+              {% if isPro or isMonitor %}
+                <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;"> 
+                  <tr>
+                    <td width="20%" valign="top">
+                      {{ line_image }}
+                    </td>
+                    <td width="33%" valign="top">
+                      {{ line_info1_procsx}}
+                    </td>
+                    <td width="40%" valign="top">
+                      {{ line_info2_procsx }}
+                    </td>
+                  </tr>
+                </table>
+              {% endif %}
               {% comment %} ///// isFits LINE ITEMS {% endcomment %}
-              <table width="100%" {% if isFits %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none;" {% endif %}>
-                <tr>
-                  <td width="20%" valign="top">
-                    
-                  </td>
-                  <td width="80%" valign="middle" style="padding-bottom: 20px;">
-                    {{ line_image }}
-                    {{ line_info_fitsaccs }}
-                  </td>
-                </tr>
-              </table>
+              {% if isFits %}
+                <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+                  <tr>
+                    <td width="20%" valign="top">
+                      
+                    </td>
+                    <td width="80%" valign="middle" style="padding-bottom: 20px;">
+                      {{ line_image }}
+                      {{ line_info_fitsaccs }}
+                    </td>
+                  </tr>
+                </table>
+              {% endif %}
               {% comment %} ///// isAccsOnly LINE ITEMS {% endcomment %}
-              <table width="100%" {% if isAccsOnly %} style="margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none;" {% endif %}>
-                <tr>
-                  <td width="100%" align="center" valign="middle">
-                    {{ line_image }}
-                  </td>
-                </tr>
-                <tr>
-                  <td width="100%" align="center" valign="middle">
-                    {{ line_info_fitsaccs }}
-                  </td>
-                </tr>
-              </table>
+              {% if isAccsOnly %}
+                <table width="100%" style="margin-bottom: 30px; font-size: 14px;">
+                  <tr>
+                    <td width="100%" align="center" valign="middle">
+                      {{ line_image }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="100%" align="center" valign="middle">
+                      {{ line_info_fitsaccs }}
+                    </td>
+                  </tr>
+                </table>
+              {% endif %}
               {% comment %} ///// isFitKit LINE ITEMS {% endcomment %}
-              <table width="100%" {% if isFitKit %} style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% else %} style="display: none; border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;" {% endif %}>
-                <tr>
-                  <td width="20%" valign="top">
-                    {{ line_image }}
-                    
-                  </td>
-                  <td width="33%" valign="middle">
-                    {{ line_info_fitsaccs }}
-                  </td>
-                  <td width="40%" align="right" valign="middle">
-                    <strong><span class="order-list__item-price">$0.00</span></strong>
-                  </td
-                </tr>
-              </table>
-            {% endfor %}  
+              {% if isFitKit %}
+                <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+                  <tr>
+                    <td width="20%" valign="top">
+                      {{ line_image }}
+                      
+                    </td>
+                    <td width="33%" valign="middle">
+                      {{ line_info_fitsaccs }}
+                    </td>
+                    <td width="40%" align="right" valign="middle">
+                      <strong><span class="order-list__item-price">$0.00</span></strong>
+                    </td>
+                  </tr>
+                </table>
+              {% endif %}
+          {% endfor %}  
           {% comment %} ////// Line Items END //// {% endcomment %}
         </td>
       </tr>
@@ -722,103 +761,107 @@
           <table class="offwhite" width="100%" style="font-size: 14px;">
             <tbody>
             {% comment %} ///////// All (EXCEPT FitKit) SHIPPING/BILLING {% endcomment %}
-              <tr {% if isFitKit == false %} style="padding: 15px 10%;" {% else %} style="display: none;" {% endif %}>
-                <td width="30%"></td>
-                <td class="py-15" width="40%" style="">
-                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                    <tbody width="100%">
-                      <tr>
-                        <td class="" align="center">
-                          <p style="margin-bottom: 15px;">
-                            <strong>Shipping Address</strong>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="" align="center"
-                          <p style="margin-bottom: 15px;">
-                            {{ shipping_address.name }}<br />
-                            {{ shipping_address.address1 }}<br />
-                            {% if shipping_address.address2 != blank %} 
-                              {{ shipping_address.address2 }}<br />
-                            {% endif %} 
-                            {{ shipping_address.city }}, 
-                            {{ shipping_address.province_code }}
-                            {{ shipping_address.zip }}<br />
-                            {{ shipping_address.country }}
-                          </p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-                <td width="30%"></td>
-              </tr>
-              {% comment %} /////////// FitKit SHIPPING/BILLING {% endcomment %}
-              <tr {% if isFitKit %} style="padding: 0 10%; padding-top: 15px;" {% else %} style="display: none;" {% endif %}>
-                <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
-                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                    <tbody width="30%">
-                      <tr>
-                        <td class="" align="left">
-                          <p style="margin-bottom: 15px;">
-                            <strong>Shipping Address</strong>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="" align="left">
-                          <p style="margin-bottom: 15px;">
-                            {{ shipping_address.name }}<br />
-                            {{ shipping_address.address1 }}<br />
-                            {% if shipping_address.address2 != blank %} 
-                              {{ shipping_address.address2 }}<br />
-                            {% endif %} 
-                            {{ shipping_address.city }}, 
-                            {{ shipping_address.province_code }}
-                            {{ shipping_address.zip }}<br />
-                            {{ shipping_address.country }}
-                          </p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-                <td width="40%" style="padding: 0 10%; padding-top: 15px;" >
-                  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                    <tbody>
-                      <tr>
-                        <td class="" align="left">
-                          <p style="margin-bottom: 15px;">
-                            <strong>Billing Address</strong>
-                          </p>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="" align="left">
-                          {% if billing_address == shipping_address %}
-                          <p style="margin-bottom: 15px;">
-                            Same as shipping address.
-                          </p>
-                          {% else %}
+              {% if isFitKit == false %}
+                <tr style="padding: 15px 10%;">
+                  <td width="30%"></td>
+                  <td class="py-15" width="40%" style="">
+                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                      <tbody width="100%">
+                        <tr>
+                          <td class="" align="center">
                             <p style="margin-bottom: 15px;">
-                              {{ billing_address.name }}<br />
-                              {{ billing_address.address1 }}<br />
-                              {% if billing_address.address2 != blank %} 
-                                {{billing_address.address2 }}<br />
-                              {% endif %} 
-                              {{ billing_address.city }}, 
-                              {{ billing_address.province_code }} 
-                              {{ billing_address.zip }}<br />
-                              {{ billing_address.country }}
+                              <strong>Shipping Address</strong>
                             </p>
-                          {% endif %}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="" align="center">
+                            <p style="margin-bottom: 15px;">
+                              {{ shipping_address.name }}<br />
+                              {{ shipping_address.address1 }}<br />
+                              {% if shipping_address.address2 != blank %} 
+                                {{ shipping_address.address2 }}<br />
+                              {% endif %} 
+                              {{ shipping_address.city }}, 
+                              {{ shipping_address.province_code }}
+                              {{ shipping_address.zip }}<br />
+                              {{ shipping_address.country }}
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                  <td width="30%"></td>
+                </tr>
+              {% endif %}
+              {% comment %} /////////// FitKit SHIPPING/BILLING {% endcomment %}
+              {% if isFitKit %} 
+                <tr style="padding: 0 10%; padding-top: 15px;">
+                  <td class="" width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                      <tbody width="30%">
+                        <tr>
+                          <td class="" align="left">
+                            <p style="margin-bottom: 15px;">
+                              <strong>Shipping Address</strong>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="" align="left">
+                            <p style="margin-bottom: 15px;">
+                              <span class="override-blue-underlines">{{ shipping_address.name }}</span><br />
+                              <span class="override-blue-underlines">{{ shipping_address.address1 }}</span><br />
+                              {% if shipping_address.address2 != blank %} 
+                                <span class="override-blue-underlines">{{ shipping_address.address2 }}</span><br />
+                              {% endif %} 
+                              <span class="override-blue-underlines">{{ shipping_address.city }}</span>, 
+                              <span class="override-blue-underlines">{{ shipping_address.province_code }}</span>
+                              <span class="override-blue-underlines">{{ shipping_address.zip }}</span><br />
+                              <span class="override-blue-underlines">{{ shipping_address.country }}</span>
+                            </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                  <td width="40%" style="padding: 0 10%; padding-top: 15px;" >
+                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                      <tbody>
+                        <tr>
+                          <td class="" align="left">
+                            <p style="margin-bottom: 15px;">
+                              <strong>Billing Address</strong>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="" align="left">
+                            {% if billing_address == shipping_address %}
+                            <p style="margin-bottom: 15px;">
+                              Same as shipping address.
+                            </p>
+                            {% else %}
+                              <p class="override-blue-links" style="margin-bottom: 15px;">
+                                <span class="override-blue-underlines">{{ billing_address.name }}</span><br />
+                                <span class="override-blue-underlines">{{ billing_address.address1 }}</span><br />
+                                {% if billing_address.address2 != blank %} 
+                                  <span class="override-blue-underlines">{{billing_address.address2 }}</span><br />
+                                {% endif %} 
+                                <span class="override-blue-underlines">{{ billing_address.city }}</span>, 
+                                <span class="override-blue-underlines">{{ billing_address.province_code }}</span> 
+                                <span class="override-blue-underlines">{{ billing_address.zip }}</span><br />
+                                <span class="override-blue-underlines">{{ billing_address.country }}</span>
+                              </p>
+                            {% endif %}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              {% endif %}
             </tbody>
           </table>
         </td>
@@ -831,92 +874,97 @@
           </div>
         </td>
       </tr>
-
-      <tr {% unless isFitKit %} style="display: none;"{% endunless %} >
-        <td>
-          <div class="p-15-all-around" align="center">
-            {{ fitkit_info_message }}
-          </div>
-        </td>
-      </tr>
+      {% unless isFitKit %}
+        <tr>
+          <td>
+            <div class="p-15-all-around" align="center">
+              {{ fitkit_info_message }}
+            </div>
+          </td>
+        </tr>
+      {% endunless %}
       {% comment %} ///// isFitKit Instructions {% endcomment %}
-      <tr {% if isFitKit %} style="padding-bottom: 30px;" {% else %} style="display: none;" {% endif %}>
-        <td>
-          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 16px; margin-bottom: 30px;">
-            <tr>
-              <td width="50%" align="left" valign="middle">
-                <img src="{{'fk-placeholder.png' | file_url}}" style="width: 90%"/>
+      {% if isFitKit %} 
+        <tr style="padding-bottom: 30px;">
+          <td>
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 16px; margin-bottom: 30px;">
+              <tr>
+                <td width="50%" align="left" valign="middle">
+                  <img src="{{'fk-placeholder.png' | file_url}}" style="width: 90%"/>
 
-              </td>
-              <td width="50%" align="don't" valign="middle">
-                <table>
-                  <tr>
+                </td>
+                <td width="50%" align="don't" valign="middle">
+                  <table>
                     <tr>
-                      <td>
-                      <h2 style="margin-bottom: 0;">1</h2>
-                      </td>
+                      <tr>
+                        <td>
+                        <h2 style="margin-bottom: 0;">1</h2>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td width="100%">
+                          <span>
+                            Download the UE FitKit app for iOS or Android
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td width="40%" align="left">
+                          <a href="https://apps.apple.com/us/app/ue-fitkit/id1383753317">
+                            <img src="{{'apple-appstore-emails.png' | file_url}}" style="width: 48%; margin-left: -8px;"/>
+                          </a>
+                          <a href="https://play.google.com/store/apps/details?id=com.revols.uefitkit&hl=en_US&gl=US">
+                            <img src="{{'google-play-emails.png' | file_url}}" style="width: 48%; margin-bottom: 3px;"/>
+                          </a>
+                        </td>
+                      </tr>
                     </tr>
                     <tr>
-                      <td width="100%">
-                        <span>
-                          Download the UE FitKit app for iOS or Android
-                        </span>
-                      </td>
+                      <tr>
+                        <td>
+                          <h2 style="margin-bottom: 0;">2</h2>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td width="100%">
+                          <span>
+                            Follow the step-by-step instructions in the app
+                          </span>
+                        </td>
+                      </tr>
                     </tr>
                     <tr>
-                      <td width="40%" align="left">
-                        <a href="https://apps.apple.com/us/app/ue-fitkit/id1383753317">
-                          <img src="{{'apple-appstore-emails.png' | file_url}}" style="width: 48%; margin-left: -8px;"/>
-                        </a>
-                        <a href="https://play.google.com/store/apps/details?id=com.revols.uefitkit&hl=en_US&gl=US">
-                          <img src="{{'google-play-emails.png' | file_url}}" style="width: 48%; margin-bottom: 3px;"/>
-                        </a>
-                      </td>
+                      <tr>
+                        <td>
+                          <h2 style="margin-bottom: 0;">3</h2>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span>
+                            When you’re done, pack up your tips and send your fitkit back to 
+                            us using the included prepaid shipping label
+                          </span>
+                        </td>
+                      </tr>
                     </tr>
-                  </tr>
-                  <tr>
-                    <tr>
-                      <td>
-                        <h2 style="margin-bottom: 0;">2</h2>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="100%">
-                        <span>
-                          Follow the step-by-step instructions in the app
-                        </span>
-                      </td>
-                    </tr>
-                  </tr>
-                  <tr>
-                    <tr>
-                      <td>
-                        <h2 style="margin-bottom: 0;">3</h2>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <span>
-                          When you’re done, pack up your tips and send your fitkit back to 
-                          us using the included prepaid shipping label
-                        </span>
-                      </td>
-                    </tr>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <div {% unless isFitKit %} style="display: none;" {% endunless %}  align="center">
-            <p style="margin-bottom: 15px;"><strong>Check Out Our FitKit Guide To Learn More</strong></p>
-            <img src="https://d3k81ch9hvuctc.cloudfront.net/company/HskQ5V/images/840dbd69-a2d0-4ebf-8bdb-9bdaf1bfa31b.gif" style="display: block; width: 100%; margin-bottom: 20px;"/>
-          </div>
-        </td>
-      </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      {% endif %}
+      {% if isFitKit %}
+        <tr>
+          <td>
+              <div  align="center">
+                <p style="margin-bottom: 15px;"><strong>Check Out Our FitKit Guide To Learn More</strong></p>
+                <img src="https://d3k81ch9hvuctc.cloudfront.net/company/HskQ5V/images/840dbd69-a2d0-4ebf-8bdb-9bdaf1bfa31b.gif" style="display: block; width: 100%; margin-bottom: 20px;"/>
+              </div>
+          </td>
+        </tr>
+      {% endif %}
       <tr>
         <td>
           <div class="p-15-all-around" align="center">

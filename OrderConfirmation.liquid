@@ -48,17 +48,10 @@
     {% if line.product.type %}	
             {% assign line_type = line.product.type %}	
       {% endif %}
-          <span>{{line_type}}</span><br/>
+          product_type:<span>{{line_type}}</span><br/>
+    {% for prop in line.properties reversed %}
+      prop: <span>{{prop.first}}</span> - <span>{{prop.last}}</span><br/>
     {% endfor %}
-    {% for line in fulfillment.fulfillment_line_items %}
-      {% if line.line_item.image %}
-            <img src="{{ line.line_item | img_url: 'compact_cropped' }}" align="left" width="60" height="60" class="order-list__product-image"/>
-      {% endif %}
-      {% if line.line_item.product.type %}	
-            {% assign line_type = line.line_item.product.type %}	
-          {% else %}
-          <span>{{line_type}}</span><br/>
-      {% endif %}
     {% endfor %}
   </div>
 {% endcapture %} {% endcomment %}
@@ -496,6 +489,9 @@
     p small {
       color: grey;
     }
+    .line-items-total p {
+      margin: 0 0 15px;
+    }
 ​
     .ie-container table,
     .mso-container table {
@@ -720,10 +716,26 @@
                     {% else %}
                       {{ line_info_fitsaccs}}
                     {% endif %}
+                    {% comment %} /////     ///// {% endcomment %}
+                    {% comment %} {% if base_model_value != blank %}
+                      {% if line_info1_procsx != blank %}
+                        {{ line_info1_procsx}}
+                      {% else %}
+                        {{ line_info2_procsx}}
+                      {% endif %}
+                    {% else %}
+                      {{ line_info_fitsaccs}}
+                    {% endif %} {% endcomment %}
+                    {% comment %} ////////// {% endcomment %}
                   </td>
                   <td width="40%" valign="top">
+                  {% comment %} ///// {% endcomment %}
+                  {% comment %} {% unless line_info1_procsx == blank %}
                     {{ line_info2_procsx }}
-                  </td
+                  {% endunless %} {% endcomment %}
+                  {% comment %} ///// {% endcomment %}
+                    {{ line_info2_procsx }}
+                  </td>
                 </tr>
                 <tr>
                   <td width="20%"></td>
@@ -741,12 +753,12 @@
       
       <tr>
         <td>
-          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 14px;">
+          <table class="line-items-total" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0" style="font-size: 14px;">
             <tbody>
               <tr>
                 {% if discount != blank %}
                   <td width="60%"></td>
-                  <td class="" align="left">
+                  <td  align="left">
                     <p>Discount</p>
                   </td>
                   <td class="" align="right">

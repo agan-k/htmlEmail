@@ -1,6 +1,12 @@
 {% comment %}
 //// ASSIGN PRODUCT ///// 
 {% endcomment %}
+{% comment %} {%- liquid
+	assign isPro = false 
+  assign isMonitor = false 
+  assign isFits = false 
+  assign isAccsOnly = true
+-%} {% endcomment %}
 {%- liquid
 	assign isPro = false 
   assign isMonitor = false 
@@ -101,12 +107,12 @@
     {% if isPro %}
     <p>
       <strong>Hi {{ customer.first_name }},</strong><br/><br/>
-      Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you your custom IEMs. 
+      Thank you for your order <strong>#{{ order_number }}</strong>. We can’t wait to get you your custom IEMs. 
       Before we can customize your PRO in-ear monitors, we need your impressions.
     </p>
     <p>
       <strong>If you’re sending us physical molds, please share 
-      <a href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-">these instructions</a>
+      <a href="https://backstage.ultimateears.com/media/pdfs/2018audiologist-instructions.pdf">these instructions</a>
       with your audiologist</strong> to ensure they capture all of the information needed to craft your IEMs. 
       Your impressions should look similar to the sample impression in terms of canal size, detail and base
       width. Failing to capture all of the information we need may result in your impressions being unusable. 
@@ -114,7 +120,7 @@
     <p>
       Once you have your physical impressions, please ship them to:<br/><br/> 
       <strong>
-      Ultimate Ears Pro {{ order_number }}<br/>
+      Ultimate Ears Pro #{{ order_number }}<br/>
       3 Jenner Street<br/>
       Suite 180<br/>
       Irvine, CA 92618<br/>
@@ -122,7 +128,7 @@
       </strong>
     </p>
     <div>
-      <a id="btn" href="https://fitkit.zendesk.com/hc/en-us/articles/360047785712-Audiologist-Impressions-" style="margin-bottom: 30px;">
+      <a id="btn" href="https://backstage.ultimateears.com/media/pdfs/2018audiologist-instructions.pdf" style="margin-bottom: 30px;">
         <!--[if mso]>
         <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
           <![endif]-->
@@ -145,7 +151,7 @@
       <p>
         <strong>Hi {{ customer.first_name }},</strong><br/><br/>
 
-        Thank you for your order <strong>{{ order_number }}</strong>. We can’t wait to get you the premium 
+        Thank you for your order <strong>#{{ order_number }}</strong>. We can’t wait to get you the premium 
         listening experience you’ve been waiting for.
       </p>
       <p>
@@ -155,7 +161,7 @@
       </p>
     {% elsif isFits %}
       <p>
-        Your UE FITS order <strong>{{ order_number }}</strong> is
+        Your UE FITS order <strong>#{{ order_number }}</strong> is
         confirmed. You will receive a shipping confirmation email with
         tracking information when your order ships.
       </p>
@@ -171,7 +177,7 @@
       <p>
         <strong>Hi {{ customer.first_name }},</strong><br/><br/>
 
-        Your Ultimate Ears Order [order#] is confirmed! We’ll be in touch with tracking 
+        Your Ultimate Ears Order <strong>#{{ order_number }}</strong> is confirmed! We’ll be in touch with tracking 
         information as soon as your order is ready to ship. 
 
       </p>
@@ -264,14 +270,17 @@
 //// SOCIAL ICONS /////
 {% endcomment %}
 {% capture social %}
-    <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-fb.png' | file_url}}"/></a>
-    <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'icon-insta.png' | file_url}}"/></a>
-    <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'icon-twitter.png' | file_url}}"/></a>
-    {% if isPro or isMonitor %}
-      <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
-    {% elsif isFits %}
-      <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'icon-tiktok.png' | file_url}}"/></a>
-    {% endif %}
+  {% if isFits %}
+    <a href="https://www.facebook.com/UltimateEars"><img class="social__icon" src="{{ 'email-icon-fb.png' | file_url}}"/></a>
+    <a href="https://www.instagram.com/ultimateears/"><img class="social__icon" src="{{ 'email-icon-in.png' | file_url}}"/></a>
+    <a href="https://twitter.com/UltimateEars"><img class="social__icon" src="{{ 'email-icon-tw.png' | file_url}}"/></a>
+    <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
+  {% else %}
+    <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'email-icon-fb.png' | file_url}}"/></a>
+    <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'email-icon-in.png' | file_url}}"/></a>
+    <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'email-icon-tw.png' | file_url}}"/></a>
+    <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
+  {% endif %}
 {% endcapture %}
 
 {% capture copyright %}
@@ -466,6 +475,7 @@
     body {
       max-width: 600px;
       margin: 0 auto;
+      margin-top: -50px;/* push mistery paragraph away! */
       padding: 0;
       font-family: 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;
       font-size: 18px;
@@ -600,6 +610,9 @@
                 <strong><span class="order-list__item-title">
                   {{ line_title }} × {{ line_display }}
                 </span></strong><br />
+                {% if lline.line_item.variant.title != 'Default Title' %}
+                  <span class="order-list__item-variant">{{ lline.line_item.variant.title }}</span>
+                {% endif %}
                 {% comment %} <span>fitsAccs_key: fitsAccs_value</span> {% endcomment %}
               {% endcapture %}
 
@@ -612,7 +625,7 @@
                 <strong>
                   <span class="order-list__item-title"> {{ line_title }}</span><br />
                 </strong>
-                  {% comment %} <span>info1_key: info1_value</span><br/> {% endcomment %}
+                  <span>info1_key: info1_value</span><br/>
                 {% for prop in line.properties reversed %}
                   {% unless prop.last == blank %}
                     {% if prop.first contains '_' %}
@@ -649,7 +662,7 @@
               {% endcapture %}
               
               {% capture line_info2_procsx %}
-                {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
+                <span>info2_key: info2_value</span><br/>
                 {% for prop in line.properties reversed %}
                     {% unless prop.last == blank %}
                       {% if prop.first contains '_' %}
@@ -678,7 +691,7 @@
                           {{ item | capitalize }}
                           {% endfor %}
                       {% endcapture %}
-                    <span>{{multy_word_key}}: <br/> {{prop_value}}</span><br/>
+                    <span>{{multy_word_key}}: {{prop_value}}</span><br/>
                   {% endcase %}
                 {% endfor %}
               {% endcapture %}
@@ -689,62 +702,77 @@
                 {% endif %}
                   <strong><span class="order-list__item-price">{{ line.line_price | money }}</span></strong>
               {% endcapture %}
-            
-              <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
-                <tr>
-                  <td width="20%" valign="top">
-                    {{ line_image }}
-                  </td>
-                  <td width="33%" valign="top">
-                    {% if line_title contains "PRO" or line_title contains "Live" %}
-                      {% assign title_has_pro = true %}
-                    {% endif %}
-                    {% if line_title contains "CSX" %}
-                      {% assign title_has_csx = true %}
-                    {% endif %}
-                    {% if title_has_pro or title_has_csx %}
-                      {% assign title_has_pro_csx = true %}
-                    {% endif %}
-                    {% for prop in line.properties %}
-                      {% if  prop.first == 'Base Model'%}
-                        {% assign base_model_value = prop.last %}
+              {% if isPro or isMonitor %}
+                <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+                  <tr>
+                    <td width="20%" valign="middle">
+                      {{ line_image }}
+                    </td>
+                    <td width="33%" valign="middle">
+                      {% if line_title contains "PRO" or line_title contains "Live" %}
+                        {% assign title_has_pro = true %}
                       {% endif %}
-                    {% endfor %}
-                    {% comment %} Use base_model_value or title_has_ to determine if configurator item {% endcomment %}
-                    {% if base_model_value != blank %}
-                      {{ line_info1_procsx}}
-                    {% else %}
-                      {{ line_info_fitsaccs}}
-                    {% endif %}
-                    {% comment %} /////     ///// {% endcomment %}
-                    {% comment %} {% if base_model_value != blank %}
-                      {% if line_info1_procsx != blank %}
+                      {% if line_title contains "CSX" %}
+                        {% assign title_has_csx = true %}
+                      {% endif %}
+                      {% if title_has_pro or title_has_csx %}
+                        {% assign title_has_pro_csx = true %}
+                      {% endif %}
+                      {% for prop in line.properties %}
+                        {% if  prop.first == 'Base Model'%}
+                          {% assign base_model_value = prop.last %}
+                        {% endif %}
+                      {% endfor %}
+                      {% comment %} Use base_model_value or title_has_ to determine if configurator item {% endcomment %}
+                      {% if base_model_value != blank %}
                         {{ line_info1_procsx}}
                       {% else %}
-                        {{ line_info2_procsx}}
+                        {{ line_info_fitsaccs}}
                       {% endif %}
-                    {% else %}
-                      {{ line_info_fitsaccs}}
-                    {% endif %} {% endcomment %}
-                    {% comment %} ////////// {% endcomment %}
-                  </td>
-                  <td width="40%" valign="top">
-                  {% comment %} ///// {% endcomment %}
-                  {% comment %} {% unless line_info1_procsx == blank %}
-                    {{ line_info2_procsx }}
-                  {% endunless %} {% endcomment %}
-                  {% comment %} ///// {% endcomment %}
-                    {{ line_info2_procsx }}
-                  </td>
-                </tr>
-                <tr>
-                  <td width="20%"></td>
-                  <td width="40%"></td>
-                  <td width="40%" align="right" style="padding-bottom: 15px;">
-                    {{ line_price }}
-                  </td>
-                </tr>
-              </table>
+                      {% comment %} /////     ///// {% endcomment %}
+                      {% comment %} {% if base_model_value != blank %}
+                        {% if line_info1_procsx != blank %}
+                          {{ line_info1_procsx}}
+                        {% else %}
+                          {{ line_info2_procsx}}
+                        {% endif %}
+                      {% else %}
+                        {{ line_info_fitsaccs}}
+                      {% endif %} {% endcomment %}
+                      {% comment %} ////////// {% endcomment %}
+                    </td>
+                    <td width="40%" valign="top">
+                    {% comment %} ///// {% endcomment %}
+                    {% comment %} {% unless line_info1_procsx == blank %}
+                      {{ line_info2_procsx }}
+                    {% endunless %} {% endcomment %}
+                    {% comment %} ///// {% endcomment %}
+                      {{ line_info2_procsx }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="20%"></td>
+                    <td width="40%"></td>
+                    <td width="40%" align="right" style="padding-bottom: 15px;">
+                      {{ line_price }}
+                    </td>
+                  </tr>
+                </table>
+              {% elsif isFits or isAccsOnly %}
+                <table width="100%" style="border-bottom: 2px solid #FAF9F7; margin-bottom: 30px; font-size: 14px;">
+                  <tr>
+                    <td width="20%" valign="top">
+                      {{ line_image }}
+                    </td>
+                    <td width="33%" valign="middle">
+                      {{ line_info_fitsaccs }}
+                    </td>
+                    <td width="40%" align="right" valign="middle">
+                      {{ line_price }}
+                    </td>
+                  </tr>
+                </table>
+              {% endif %}
             {% endunless %}
           {% endfor %}  
           {% comment %} ////// Line Items END //// {% endcomment %}

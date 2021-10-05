@@ -625,7 +625,7 @@
                 <strong>
                   <span class="order-list__item-title"> {{ line_title }}</span><br />
                 </strong>
-                  <span>info1_key: info1_value</span><br/>
+                  {% comment %} <span>info1_key: info1_value</span><br/> {% endcomment %}
                 {% for prop in line.properties reversed %}
                   {% unless prop.last == blank %}
                     {% if prop.first contains '_' %}
@@ -662,7 +662,7 @@
               {% endcapture %}
               
               {% capture line_info2_procsx %}
-                <span>info2_key: info2_value</span><br/>
+                {% comment %} <span>info2_key: info2_value</span><br/> {% endcomment %}
                 {% for prop in line.properties reversed %}
                     {% unless prop.last == blank %}
                       {% if prop.first contains '_' %}

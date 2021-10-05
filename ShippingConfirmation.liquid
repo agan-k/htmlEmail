@@ -5,7 +5,7 @@
 {% assign isMonitor = false %}
 {% assign isFitKit = false %}
 {% assign isFits = false %}
-{% assign isAccsOnly = false %}
+{% assign isAccsOnly = true %}
 {% for line in fulfillment.fulfillment_line_items %}
   {% if line.line_item.product.type == "pro" or line.line_item.product.type == "Pro-Hidden" %}
     {% assign isPro = true %}
@@ -104,7 +104,7 @@
 
   {% capture order_tracking_number %}
     {% if fulfillment.tracking_numbers.size == 1 %}
-    {{ fulfillment.tracking_numbers.first }}
+    {{ fulfillment.tracking_numbers.first | append: "."}}
     {% endif %}
   {% endcapture %}
 {% endif %}
@@ -112,7 +112,7 @@
 ////  ORDER TRACKING Button /////
 {% endcomment %}
 {% capture order_tracking_button %}
-  <a id="btn" href="{{ order_tracking_url }}">
+  <a id="btn" href="{{ order_tracking_url }}" style="margin-top: 20px;">
     <!--[if mso]>
     <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
       <![endif]-->
@@ -144,12 +144,12 @@
   {% elsif isFitKit %}
       <p>
         <strong>Hi {{ customer.first_name }},</strong><br/><br/>
-        Your FitKit for order <strong>{{ order_number }}</strong> is officially on its way. You can follow 
+        Your FitKit for order <strong>#{{ order_number }}</strong> is officially on its way. You can follow 
         its progress via tracking number<strong>{{order_tracking_number}}</strong>
       </p>
   {% elsif isFits %}
     <p>
-      Hey {{ customer.first_name }}, order <strong>{{ order_number }}</strong> has shipped! Follow its journey 
+      Hey {{ customer.first_name }}, order <strong>#{{ order_number }}</strong> has shipped! Follow its journey 
       at <strong>{{order_tracking_number}}</strong> 
     </p>
   {% elsif isAccsOnly %}
@@ -157,7 +157,7 @@
       Hi {{ customer.first_name }}, <br/>
     </p>
     <p>
-      Your Ultimate Ears order <strong>{{ order_number }}</strong> is on its way to you! Follow its journey 
+      Your Ultimate Ears order <strong>#{{ order_number }}</strong> is on its way to you! Follow its journey 
       at <strong>{{order_tracking_number}}</strong>
     </p>
   {% endif %}
@@ -249,15 +249,22 @@
 //// SOCIAL ICONS /////
 {% endcomment %}
 {% capture social %}
+  {% if isFits %}
+    <a href="https://www.facebook.com/UltimateEars"><img class="social__icon" src="{{ 'email-icon-fb.png' | file_url}}"/></a>
+    <a href="https://www.instagram.com/ultimateears/"><img class="social__icon" src="{{ 'email-icon-in.png' | file_url}}"/></a>
+    <a href="https://twitter.com/UltimateEars"><img class="social__icon" src="{{ 'email-icon-tw.png' | file_url}}"/></a>
+    <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
+  {% else %}
     <a href="https://www.facebook.com/UltimateEarsPro"><img class="social__icon" src="{{ 'email-icon-fb.png' | file_url}}"/></a>
     <a href="https://www.instagram.com/ultimateearspro/"><img class="social__icon" src="{{ 'email-icon-in.png' | file_url}}"/></a>
     <a href="https://twitter.com/UltimateEarsPro"><img class="social__icon" src="{{ 'email-icon-tw.png' | file_url}}"/></a>
-    {% if isPro or isMonitor %}
-      <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
-    {% elsif isFits %}
-      <a href="https://www.tiktok.com/@ultimateears"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
-    {% endif %}
+    <a href="https://www.tiktok.com/@ultimateearspro"><img class="social__icon" src="{{ 'email-icon-tt.png' | file_url}}"/></a>
+  {% endif %}
 {% endcapture %}
+
+{% comment %}
+//// COPYRIGHT /////
+{% endcomment %}
 {% capture copyright %}
   <p>
     <small>
@@ -265,6 +272,7 @@
     </small>
   </p>
 {% endcapture %}
+
 <!DOCTYPE html>
 <html lang="en">
 ​
@@ -302,6 +310,10 @@
       padding-top: 15px;
       padding-bottom: 15px;
     }
+    .px-15 {
+      padding-right: 15px;
+      padding-left: 15px;
+    }
     .pt-15 {
       padding-top: 15px;
     }
@@ -310,6 +322,9 @@
     }
     .pt-30 {
       padding-top: 30px;
+    }
+    .pt-40 {
+      padding-top: 40px;
     }
     .pb-15 {
       padding-bottom: 15px;
@@ -386,6 +401,7 @@
     body {
       max-width: 600px;
       margin: 0 auto;
+      margin-top: -50px; /* push away the mistery <p>!</p>*/
       padding: 0;
       font-family: 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;
       font-size: 18px;
@@ -782,22 +798,26 @@
         </td>
       </tr>
 
-      <tr>
-        <td>
-          <div class="p-30-all-around" align="center">
-            {{ order_tracking_button }}
-          </div>
-        </td>
-      </tr>
-      {% unless isFitKit %}
+      {% if isFits %}
         <tr>
           <td>
-            <div class="p-15-all-around" align="center">
+            <div class="p-30-all-around" align="center">
+              {{ order_tracking_button }}
+            </div>
+          </td>
+        </tr>
+      {% endif %}
+
+      {% if isFitKit %}
+        <tr>
+          <td>
+            <div class="px-15 pt-40" align="center">
               {{ fitkit_info_message }}
             </div>
           </td>
         </tr>
-      {% endunless %}
+      {% endif %}
+
       {% comment %} ///// isFitKit Instructions {% endcomment %}
       {% if isFitKit %} 
         <tr style="padding-bottom: 30px;">
@@ -826,10 +846,10 @@
                       <tr>
                         <td width="40%" align="left">
                           <a href="https://apps.apple.com/us/app/ue-fitkit/id1383753317">
-                            <img src="{{'apple-appstore-emails.png' | file_url}}" style="width: 48%; margin-left: -8px;"/>
+                            <img src="{{'apple-appstore-emails.png' | file_url }}" style="width: 45%;"/>
                           </a>
                           <a href="https://play.google.com/store/apps/details?id=com.revols.uefitkit&hl=en_US&gl=US">
-                            <img src="{{'google-play-emails.png' | file_url}}" style="width: 48%; margin-bottom: 3px;"/>
+                            <img src="{{'google-play-emails.png' | file_url }}" style="width: 45%;"/>
                           </a>
                         </td>
                       </tr>
@@ -857,7 +877,7 @@
                       <tr>
                         <td>
                           <span>
-                            When you’re done, pack up your tips and send your fitkit back to 
+                            When you’re done, pack up your tips and send your FitKit back to 
                             us using the included prepaid shipping label
                           </span>
                         </td>
@@ -874,8 +894,10 @@
         <tr>
           <td>
               <div  align="center">
-                <p style="margin-bottom: 15px;"><strong>Check Out Our FitKit Guide To Learn More</strong></p>
-                <img src="https://d3k81ch9hvuctc.cloudfront.net/company/HskQ5V/images/840dbd69-a2d0-4ebf-8bdb-9bdaf1bfa31b.gif" style="display: block; width: 100%; margin-bottom: 20px;"/>
+                <a href="https://fitkit.zendesk.com/hc/en-us/articles/360035352592-FitKit-Guide">
+                  <p style="margin-bottom: 15px;"><strong>Check Out Our FitKit Guide To Learn More</strong></p>
+                  <img src="https://d3k81ch9hvuctc.cloudfront.net/company/HskQ5V/images/840dbd69-a2d0-4ebf-8bdb-9bdaf1bfa31b.gif" style="display: block; width: 100%; margin-bottom: 20px;"/>
+                </a>
               </div>
           </td>
         </tr>

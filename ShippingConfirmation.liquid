@@ -72,25 +72,33 @@
 ////// ORDER PROGRESS BAR ////////
 {% endcomment %}
 {%- capture order_progress_bar -%}
-  <div style="margin-bottom: 25px;">
-    {% if isPro %}
+  {% if isAccsOnly %}
+    <div style="margin-bottom: 0;">
       <img align="center" border="0"
-        src="{{ 'pro-shipped.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% elsif isMonitor %}
-      <img align="center" border="0"
-        src="{{ 'csx-shipped.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% elsif isFitKit %}
-      <img align="center" border="0"
-        src="{{ 'csx-fitkit-shipped.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% elsif isFits %}
-      <img align="center" border="0"
-        src="{{ 'fits-shipped.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% endif %}
-  </div>
+        src=""
+        alt="" title="" width="500" style="opacity: 0;"/>
+    </div>
+  {% else %}
+    <div style="margin-bottom: 25px;">
+      {% if isPro %}
+        <img align="center" border="0"
+          src="{{ 'pro-shipped.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% elsif isMonitor %}
+        <img align="center" border="0"
+          src="{{ 'csx-shipped.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% elsif isFitKit %}
+        <img align="center" border="0"
+          src="{{ 'csx-fitkit-shipped.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% elsif isFits %}
+        <img align="center" border="0"
+          src="{{ 'fits-shipped.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% endif %}
+    </div>
+  {% endif %}
 {%- endcapture -%}
 {% comment %}
 //// ORDER TRACKING /////

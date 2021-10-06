@@ -11,7 +11,7 @@
 	assign isPro = false 
   assign isMonitor = false 
   assign isFits = false 
-  assign isAccs = false 
+  assign isAccsOnly = false 
 
 	assign has_Pro = false 
   assign has_Monitor = false 
@@ -38,8 +38,8 @@
     elsif has_Pro == false and has_Monitor == false
       if has_Fits
         assign isFits = true
-      else 
-        assign isAccss = true
+      else
+        assign isAccsOnly = true
       endif
     endif
   endfor
@@ -83,21 +83,29 @@
 ////// ORDER PROGRESS BAR ////////
 {% endcomment %}
 {% capture order_progress_bar %}
-  <div style="margin-bottom: 25px;">
-    {% if isPro %}
+  {% if isAccsOnly %}
+    <div style="margin-bottom: 0;">
       <img align="center" border="0"
-        src="{{ 'pro-order-confirmed.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% elsif isMonitor %}
-      <img align="center" border="0"
-        src="{{ 'csx-order-confirmed.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% elsif isFits %}
-      <img align="center" border="0"
-        src="{{ 'fits-order-confirmed.png' | file_url }}"
-        alt="" title="" width="500" />
-    {% endif %}
-  </div>
+        src=""
+        alt="" title="" width="500" style="opacity: 0;"/>
+    </div>
+  {% else %}
+    <div style="margin-bottom: 25px;">
+      {% if isPro %}
+        <img align="center" border="0"
+          src="{{ 'pro-order-confirmed.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% elsif isMonitor %}
+        <img align="center" border="0"
+          src="{{ 'csx-order-confirmed.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% elsif isFits %}
+        <img align="center" border="0"
+          src="{{ 'fits-order-confirmed.png' | file_url }}"
+          alt="" title="" width="500" />
+      {% endif %}
+    </div>
+  {% endif %}
 {% endcapture %}
 {% comment %}
 //// CONFIRMATION MESSAGE /////
@@ -315,7 +323,7 @@
       .override-blue-underlines { 
         color:inherit !important; 
         text-decoration: none !important; 
-}
+      }
       a [x-apple-data-detectors] {
         color: inherit !important;
         text-decoration: none !important;
@@ -423,7 +431,7 @@
       width: 20px;
       margin: 0 10px;
     }
-​
+​/*
     @media (max-width: 480px) {
       #u_content_heading_1 .v-font-size {
         font-size: 30px !important;
@@ -455,7 +463,7 @@
       .u-row .u-col {
         min-width: 320px !important;
         max-width: 100% !important;
-        /* display: block !important; */
+        display: block !important;
       }
 ​
       .u-row {
@@ -471,11 +479,11 @@
         margin: 0 auto;
       }
     }
-​
+​*/
     body {
       max-width: 600px;
       margin: 0 auto;
-      margin-top: -50px;/* push mistery paragraph away! */
+      /* margin-top: -50px; push mistery paragraph away! */
       padding: 0;
       font-family: 'Arial', 'Helvetica Neue', 'Helvetica', sans-serif;
       font-size: 18px;
@@ -512,10 +520,6 @@
       line-height: inherit;
     }
 ​
-    a[x-apple-data-detectors="true"] {
-      color: inherit !important;
-      text-decoration: none !important;
-    }
 
     .black {
       background-color: black;
@@ -544,7 +548,7 @@
 ​
 <body id="body" class="clean-body">
   {% comment %} {{test_items}} {% endcomment %}
-  <table class="u-row" cellpadding="0" cellspacing="0">
+  <table cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td align="center">
